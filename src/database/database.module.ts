@@ -1,8 +1,20 @@
 import { Module } from '@nestjs/common';
-import { databaseProviders } from './providers/database.providers';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  providers: [...databaseProviders],
-  exports: [...databaseProviders],
+  imports: [
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASE_URL'),
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        dbName: 'Nexus',
+        retryWrites: true,
+      }),
+      inject: [ConfigService],
+    }),
+  ],
 })
 export class DatabaseModule {}
