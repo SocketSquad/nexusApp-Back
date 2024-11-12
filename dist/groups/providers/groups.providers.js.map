@@ -1,1 +1,0 @@
-{"version":3,"file":"groups.providers.js","sourceRoot":"","sources":["../../../src/groups/providers/groups.providers.ts"],"names":[],"mappings":";;;AACA,0DAAsD;AAEzC,QAAA,eAAe,GAAG;IAC7B;QACE,OAAO,EAAE,aAAa;QACtB,UAAU,EAAE,CAAC,QAAkB,EAAE,EAAE,CAAC,QAAQ,CAAC,KAAK,CAAC,OAAO,EAAE,0BAAW,CAAC;QACxE,MAAM,EAAE,CAAC,qBAAqB,CAAC;KAChC;CACF,CAAC"}
