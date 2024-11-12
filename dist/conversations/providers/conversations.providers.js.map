@@ -1,1 +1,0 @@
-{"version":3,"file":"conversations.providers.js","sourceRoot":"","sources":["../../../src/conversations/providers/conversations.providers.ts"],"names":[],"mappings":";;;AACA,0EAAqE;AAExD,QAAA,sBAAsB,GAAG;IACpC;QACE,OAAO,EAAE,oBAAoB;QAC7B,UAAU,EAAE,CAAC,QAAkB,EAAE,EAAE,CACjC,QAAQ,CAAC,KAAK,CAAC,cAAc,EAAE,yCAAkB,CAAC;QACpD,MAAM,EAAE,CAAC,qBAAqB,CAAC;KAChC;CACF,CAAC"}
