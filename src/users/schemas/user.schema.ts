@@ -73,9 +73,3 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-// Indexes
-UserSchema.index({ username: 1 }, { unique: true });
-UserSchema.index({ email: 1 }, { unique: true });
-UserSchema.index({ 'status.online': 1 });
-UserSchema.index({ 'accountStatus.isBlocked': 1 });

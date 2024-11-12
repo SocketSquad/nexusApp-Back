@@ -80,8 +80,3 @@ export class Conversation extends Document {
 }
 
 export const ConversationSchema = SchemaFactory.createForClass(Conversation);
-
-// Indexes
-ConversationSchema.index({ 'participants.userId': 1 });
-ConversationSchema.index({ 'metadata.lastMessageAt': -1 });
-ConversationSchema.index({ 'participants.lastRead': 1 });
