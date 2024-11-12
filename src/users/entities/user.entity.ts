@@ -32,8 +32,7 @@ export class UserEntity {
 
   @Expose({ groups: ['profile', 'admin'] })
   @ApiProperty({
-    description: 'User status information',
-    groups: ['profile', 'admin'],
+    description: 'User status information (profile and admin only)',
     example: {
       online: true,
       lastSeen: '2024-01-20T12:00:00Z',
@@ -59,7 +58,6 @@ export class UserEntity {
   @Expose({ groups: ['admin'] })
   @ApiProperty({
     description: 'Account status information (admin only)',
-    groups: ['admin'],
     example: {
       isBlocked: false,
       blockedReason: null,

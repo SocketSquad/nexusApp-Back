@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   Conversation,
   ConversationSchema,
-} from './schemas/conversation.schema';
+} from './schemas/conversations.schema';
 
 @Module({
   imports: [
