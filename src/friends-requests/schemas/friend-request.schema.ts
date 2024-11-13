@@ -1,6 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { FriendStatus } from '../../utils/types';
+
+export enum FriendRequestStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  REJECTED = 'rejected',
+}
 
 @Schema({
   collection: 'friend_requests',
@@ -25,20 +30,12 @@ export class FriendRequest extends Document {
 
   @Prop({
     type: String,
-    enum: Object.values(FriendStatus),
-    default: FriendStatus.PENDING,
+    enum: Object.values(FriendRequestStatus),
+    default: FriendRequestStatus.PENDING,
+    required: true,
     index: true,
   })
-  status: FriendStatus;
-
-  @Prop({ type: Date, default: Date.now })
-  createdAt: Date;
-
-  @Prop({ type: Date, default: Date.now })
-  updatedAt: Date;
-
-  @Prop({ type: Date })
-  respondedAt?: Date;
+  status: FriendRequestStatus;
 }
 
 export const FriendRequestSchema = SchemaFactory.createForClass(FriendRequest);

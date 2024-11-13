@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
-  Conversation,
-  ConversationSchema,
-} from './schemas/conversations.schema';
+  GroupConversation,
+  GroupConversationSchema,
+} from './schemas/group-conversations.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Conversation.name, schema: ConversationSchema },
+      { name: GroupConversation.name, schema: GroupConversationSchema },
     ]),
   ],
   controllers: [],
   providers: [],
   exports: [],
 })
-export class ConversationsModule {}
+export class GroupConversationsModule {}
