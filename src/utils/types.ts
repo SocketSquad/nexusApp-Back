@@ -5,12 +5,14 @@ export enum AttachmentType {
   FILE = 'file',
 }
 
-export enum AttachmentStatus {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
+// Message types
+
+export enum MessageType {
+  TEXT = 'text',
+  IMAGE = 'image',
+  FILE = 'file',
 }
+
 // Friend types
 
 export enum FriendStatus {

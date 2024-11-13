@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { MessageType } from '../../utils/types';
 
 @Schema({
   collection: 'group_messages',
@@ -27,11 +28,11 @@ export class GroupMessage extends Document {
 
   @Prop({
     type: String,
-    enum: ['text', 'image', 'file', 'system'],
-    default: 'text',
+    enum: Object.values(MessageType),
+    default: MessageType.TEXT,
     required: true,
   })
-  type: string;
+  type: MessageType;
 
   @Prop({ type: [String], default: [] })
   mentions: string[];
@@ -39,13 +40,13 @@ export class GroupMessage extends Document {
   @Prop({
     type: [
       {
-        userId: { type: MongooseSchema.Types.ObjectId, ref: 'User' },
-        readAt: { type: Date, default: Date.now },
+        type: MongooseSchema.Types.ObjectId,
+        ref: 'Attachment',
       },
     ],
     default: [],
   })
-  readBy: Array<{ userId: MongooseSchema.Types.ObjectId; readAt: Date }>;
+  attachments: MongooseSchema.Types.ObjectId[];
 }
 
 export const GroupMessageSchema = SchemaFactory.createForClass(GroupMessage);
