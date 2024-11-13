@@ -9,4 +9,4 @@ import { Attachment, AttachmentSchema } from './schema/attachment.schema';
     ]),
   ],
 })
-export class MessageAttachmentsModule {}
+export class AttachmentsModule {}
