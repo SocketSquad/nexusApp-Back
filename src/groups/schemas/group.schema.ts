@@ -3,52 +3,23 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ _id: false })
 class GroupMember {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  })
   userId: MongooseSchema.Types.ObjectId;
 
   @Prop({
     type: String,
     enum: ['admin', 'member'],
     default: 'member',
+    required: true,
   })
   role: string;
 
   @Prop({ type: Date, default: Date.now })
   joinedAt: Date;
-
-  @Prop({ type: [String], default: [] })
-  permissions: string[];
-}
-
-@Schema({ _id: false })
-class GroupSettings {
-  @Prop({
-    type: String,
-    enum: ['public', 'private'],
-    default: 'public',
-  })
-  privacy: string;
-
-  @Prop({ default: false })
-  joinApproval: boolean;
-
-  @Prop({ default: true })
-  allowInvites: boolean;
-
-  @Prop({ type: Number, default: 30 })
-  messageRetention: number;
-}
-
-@Schema({ _id: false })
-class GroupMetadata {
-  @Prop({ type: Date, default: Date.now })
-  createdAt: Date;
-
-  @Prop({ type: Date, default: Date.now })
-  updatedAt: Date;
-
-  @Prop({ type: Date })
-  lastActivityAt: Date;
 }
 
 @Schema({
@@ -65,25 +36,29 @@ export class Group extends Document {
   name: string;
 
   @Prop({
-    trim: true,
-    maxlength: 500,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true,
   })
-  description: string;
-
-  @Prop({ required: false })
-  avatar?: string;
-
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   owner: MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: [GroupMember], default: [] })
+  @Prop({
+    type: [GroupMember],
+    default: [],
+  })
   members: GroupMember[];
 
-  @Prop({ type: GroupSettings, default: () => ({}) })
-  settings: GroupSettings;
+  @Prop({
+    type: String,
+    enum: ['public', 'private'],
+    default: 'public',
+    required: true,
+  })
+  privacy: string;
 
-  @Prop({ type: GroupMetadata, default: () => ({}) })
-  metadata: GroupMetadata;
+  @Prop({ type: Date, default: Date.now })
+  lastActivityAt: Date;
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);
