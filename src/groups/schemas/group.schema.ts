@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-
+import { GroupPrivacy } from '../../utils/types';
 @Schema({ _id: false })
 class GroupMember {
   @Prop({
@@ -51,8 +51,8 @@ export class Group extends Document {
 
   @Prop({
     type: String,
-    enum: ['public', 'private'],
-    default: 'public',
+    enum: Object.values(GroupPrivacy),
+    default: GroupPrivacy.PUBLIC,
     required: true,
   })
   privacy: string;
