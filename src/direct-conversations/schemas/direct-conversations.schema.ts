@@ -32,13 +32,6 @@ class LastMessage {
 
   @Prop({ type: Date, default: Date.now })
   sentAt: Date;
-
-  @Prop({
-    type: String,
-    enum: ['text', 'image', 'file'],
-    default: 'text',
-  })
-  type: string;
 }
 
 @Schema({
@@ -54,9 +47,6 @@ export class DirectConversation extends Document {
 
   @Prop({ type: LastMessage })
   lastMessage?: LastMessage;
-
-  @Prop({ type: Date, default: Date.now })
-  lastMessageAt: Date;
 }
 
 export const DirectConversationSchema =

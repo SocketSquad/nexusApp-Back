@@ -1,15 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { AttachmentType, AttachmentStatus } from '../../utils/types';
-
-@Schema({ _id: false })
-class AttachmentMetadata {
-  @Prop({ required: true })
-  size: number;
-
-  @Prop({ required: true })
-  mimeType: string;
-}
+import { AttachmentType } from '../../utils/types';
 
 @Schema({
   collection: 'attachments',
@@ -17,38 +8,43 @@ class AttachmentMetadata {
 })
 export class Attachment extends Document {
   @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    required: true,
+    refPath: 'messageType',
+    index: true,
+  })
+  messageId: MongooseSchema.Types.ObjectId;
+
+  @Prop({
+    type: String,
+    required: true,
+    enum: ['DirectMessage', 'GroupMessage'],
+  })
+  messageType: string;
+
+  @Prop({
     type: String,
     enum: Object.values(AttachmentType),
     required: true,
-    index: true,
   })
   type: AttachmentType;
 
   @Prop({ required: true })
-  key: string;
-
-  @Prop({ required: true })
-  originalName: string;
+  fileName: string;
 
   @Prop({ required: true })
   url: string;
 
-  @Prop({ type: AttachmentMetadata, required: true })
-  metadata: AttachmentMetadata;
+  @Prop({ required: true })
+  size: number;
 
   @Prop({
-    type: String,
-    enum: Object.values(AttachmentStatus),
-    default: AttachmentStatus.PENDING,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'User',
+    required: true,
     index: true,
   })
-  status: AttachmentStatus;
-
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Message', required: true })
-  messageId: MongooseSchema.Types.ObjectId;
-
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  userId: MongooseSchema.Types.ObjectId;
+  uploaderId: MongooseSchema.Types.ObjectId;
 }
 
 export const AttachmentSchema = SchemaFactory.createForClass(Attachment);
