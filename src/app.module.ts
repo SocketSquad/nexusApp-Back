@@ -7,7 +7,8 @@ import { GroupsModule } from './groups/groups.module';
 import { MessagesModule } from './messages/messages.module';
 import { MessageAttachmentsModule } from './message-attachments/message-attachments.module';
 import { FriendsModule } from './friends/friends.module';
-import { FriendsRequestsModule } from './friends-requests/friends-requests.module';
+import { FriendRequestModule } from './friends-requests/friends-requests.module';
+
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { FriendsRequestsModule } from './friends-requests/friends-requests.modul
     MessagesModule,
     MessageAttachmentsModule,
     FriendsModule,
-    FriendsRequestsModule,
+    FriendRequestModule ,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,3 @@
-
-
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { FriendRequestService } from '../providers/friend-request.service';
 import { CreateFriendRequestDto } from '../dtos/create-friend-request.dto';
@@ -10,7 +8,7 @@ import { IFriendRequest } from '../interfaces/friend-request.interface';
 export class FriendRequestController {
   constructor(private readonly friendRequestService: FriendRequestService) {}
 
-  @Post()
+  @Post('')
   async create(@Body() createFriendRequestDto: CreateFriendRequestDto): Promise<IFriendRequest> {
     return this.friendRequestService.create(createFriendRequestDto);
   }

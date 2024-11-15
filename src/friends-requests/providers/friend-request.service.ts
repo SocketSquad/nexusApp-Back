@@ -1,12 +1,11 @@
-// friend-request.service.ts
-
-import { Injectable } from '@nestjs/common';
+import { Injectable ,NotFoundException  } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IFriendRequest } from '../interfaces/friend-request.interface';
 import { CreateFriendRequestDto } from '../dtos/create-friend-request.dto';
 import { UpdateFriendRequestDto } from '../dtos/update-friend-request.dto';
 import { FriendRequestNotFoundException } from '../exeptions/friend-request-not-found.exception';
+
 
 @Injectable()
 export class FriendRequestService {
@@ -20,10 +19,13 @@ export class FriendRequestService {
   }
 
   async getById(id: string): Promise<IFriendRequest> {
-    const friendRequest = await this.friendRequestModel.findById(id);
-    if (!friendRequest) throw new FriendRequestNotFoundException();
-    return friendRequest;
+    try {
+      return await this.friendRequestModel.findById(id).exec();
+    } catch (error) {
+      throw new NotFoundException(`Friend request with ID ${id} not found.`);
+    }
   }
+  
 
   async updateStatus(
     id: string,
