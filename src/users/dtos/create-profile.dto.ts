@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MaxLength } from 'class-validator';
+import { IsString, MaxLength, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateProfileDto {
   @ApiProperty({ required: false })
@@ -10,4 +10,14 @@ export class CreateProfileDto {
   @ApiProperty({ required: false })
   @IsString()
   avatar?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  theme?: string;
+
+  @ApiProperty({ required: false })
+  @IsBoolean()
+  @IsOptional()
+  isBlocked?: boolean;
 }
