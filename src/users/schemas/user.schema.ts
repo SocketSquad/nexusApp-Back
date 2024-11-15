@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document } from 'mongoose';
 
 @Schema({
   collection: 'users',
@@ -33,13 +33,6 @@ export class User extends Document {
 
   @Prop({ type: Date, default: Date.now })
   lastSeen: Date;
-
-  @Prop({
-    type: MongooseSchema.Types.ObjectId,
-    ref: 'Profile',
-    required: true,
-  })
-  profileId: MongooseSchema.Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
