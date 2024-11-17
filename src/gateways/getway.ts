@@ -1,5 +1,3 @@
-// import { Inject } from '@nestjs/common';
-// import { OnEvent } from '@nestjs/event-emitter';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -7,13 +5,10 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
+import { Logger } from '@nestjs/common';
 import { AuthenticatedSocket } from '../utils/interfaces/authenticated-socket.interface';
-// import { CreateCallDto } from './dtos/create-call.dto';
 import { IGatewaySessionManager } from './gateway.session';
-// import { IDirectConversationsService } from '../direct-conversations/interfaces/direct-conversations.interface';
-// import { IGroupConversationsService } from '../group-conversations/interfaces/group-conversations.interface';
-// import { IFriendsService } from '../friends/interfaces/friends.interface';
-// import { IGroupsService } from '../groups/interfaces/groups.interface';
+import { IGroupService } from '../groups/interfaces/group.service.interface';
 
 @WebSocketGateway({
   cors: {
@@ -26,14 +21,13 @@ import { IGatewaySessionManager } from './gateway.session';
 export class MessagingGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer() server: Server;
+  @WebSocketServer()
+  private readonly server: Server;
+  private readonly logger = new Logger(MessagingGateway.name);
 
   constructor(
-    readonly sessions: IGatewaySessionManager,
-    // private readonly directConversationsService: IDirectConversationsService,
-    // private readonly groupConversationsService: IGroupConversationsService,
-    // private readonly friendsService: IFriendsService,
-    // private readonly groupsService: IGroupsService,
+    private readonly sessions: IGatewaySessionManager,
+    private readonly groupService: IGroupService,
   ) {}
 
   handleConnection(socket: AuthenticatedSocket) {

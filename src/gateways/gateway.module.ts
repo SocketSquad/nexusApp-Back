@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-// import { MessagingGateway } from './gateway';
+import { MessagingGateway } from './getway';
 import { GatewaySessionManager } from './gateway.session';
-import { DirectConversationsModule } from '../direct-conversations/direct-conversations.module';
-import { GroupConversationsModule } from '../group-conversations/group-conversations.module';
 import { GroupsModule } from '../groups/groups.module';
-import { FriendsModule } from '../friends/friends.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [
-    DirectConversationsModule,
-    GroupConversationsModule,
-    GroupsModule,
-    FriendsModule,
+  imports: [AuthModule, GroupsModule],
+  providers: [
+    MessagingGateway,
+    GatewaySessionManager,
+    {
+      provide: 'IGatewaySessionManager',
+      useClass: GatewaySessionManager,
+    },
   ],
-  providers: [GatewaySessionManager],
-  exports: [GatewaySessionManager],
+  exports: ['IGatewaySessionManager'],
 })
 export class GatewayModule {}
