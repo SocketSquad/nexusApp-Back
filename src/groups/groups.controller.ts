@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+} from '@nestjs/common';
 
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GroupService } from './providers/groups.service';
 import { CreateGroupDto } from './dtos/create-group.dto';
-import { UpdatedGroupDto } from './dtos/update-group.dt';
+import { UpdatedGroupDto } from './dtos/update-group.dto';
 import { AddMemberDto } from './dtos/add-member.dto';
 
 @ApiTags('groups')
@@ -14,7 +23,10 @@ export class GroupController {
   @Post()
   @ApiOperation({ summary: 'Create a new group' })
   @ApiResponse({ status: 201, description: 'Group created successfully.' })
-  async create(@Body() createGroupDto: CreateGroupDto, @Query('userId') userId: string) {
+  async create(
+    @Body() createGroupDto: CreateGroupDto,
+    @Query('userId') userId: string,
+  ) {
     return this.groupService.create(createGroupDto, userId);
   }
 
