@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { GroupRepository } from '../repositories/groups.repository';
 import { CreateGroupDto } from '../dtos/create-group.dto';
 import { Group } from '../schemas/group.schema';
-import { UpdatedGroupDto } from '../dtos/update-group.dt';
+import { UpdatedGroupDto } from '../dtos/update-group.dto';
 import { AddMemberDto } from '../dtos/add-member.dto';
 import { IGroupService } from '../interfaces/group.service.interface';
 
