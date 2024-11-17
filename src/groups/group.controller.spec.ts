@@ -5,7 +5,7 @@ import { GroupController } from './groups.controller';
 import { GroupService } from './providers/groups.service';
 import { GroupPrivacy, GroupRole } from '../utils/types';
 import { CreateGroupDto } from './dtos/create-group.dto';
-import { UpdatedGroupDto } from './dtos/update-group.dt';
+import { UpdatedGroupDto } from './dtos/update-group.dto';
 import { AddMemberDto } from './dtos/add-member.dto';
 
 describe('GroupController (Integration)', () => {
@@ -58,7 +58,7 @@ describe('GroupController (Integration)', () => {
       const userId = new Types.ObjectId().toString();
 
       const result = await controller.create(createGroupDto, userId);
-      
+
       expect(service.create).toHaveBeenCalledWith(createGroupDto, userId);
       expect(result).toBeDefined();
       expect(result.name).toBe(mockGroup.name);
@@ -68,7 +68,7 @@ describe('GroupController (Integration)', () => {
   describe('findAll', () => {
     it('should return all groups', async () => {
       const result = await controller.findAll(GroupPrivacy.PUBLIC);
-      
+
       expect(service.findAll).toHaveBeenCalledWith(GroupPrivacy.PUBLIC);
       expect(result).toBeInstanceOf(Array);
       expect(result[0].name).toBe(mockGroup.name);
@@ -79,7 +79,7 @@ describe('GroupController (Integration)', () => {
     it('should return a single group', async () => {
       const groupId = mockGroup._id.toString();
       const result = await controller.findOne(groupId);
-      
+
       expect(service.findById).toHaveBeenCalledWith(groupId);
       expect(result).toBeDefined();
       expect(result.name).toBe(mockGroup.name);
@@ -95,8 +95,12 @@ describe('GroupController (Integration)', () => {
       };
 
       const result = await controller.update(groupId, updateGroupDto, userId);
-      
-      expect(service.update).toHaveBeenCalledWith(groupId, updateGroupDto, userId);
+
+      expect(service.update).toHaveBeenCalledWith(
+        groupId,
+        updateGroupDto,
+        userId,
+      );
       expect(result).toBeDefined();
     });
   });
@@ -110,9 +114,17 @@ describe('GroupController (Integration)', () => {
       };
       const requesterId = mockGroup.owner.toString();
 
-      const result = await controller.addMember(groupId, addMemberDto, requesterId);
-      
-      expect(service.addMember).toHaveBeenCalledWith(groupId, addMemberDto, requesterId);
+      const result = await controller.addMember(
+        groupId,
+        addMemberDto,
+        requesterId,
+      );
+
+      expect(service.addMember).toHaveBeenCalledWith(
+        groupId,
+        addMemberDto,
+        requesterId,
+      );
       expect(result).toBeDefined();
     });
   });
