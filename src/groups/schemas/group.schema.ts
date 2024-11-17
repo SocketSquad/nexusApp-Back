@@ -36,6 +36,14 @@ export class Group extends Document {
   name: string;
 
   @Prop({
+    required: false,
+    trim: true,
+    minlength: 3,
+    maxlength: 50,
+  })
+  description: string;
+
+  @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'User',
     required: true,
