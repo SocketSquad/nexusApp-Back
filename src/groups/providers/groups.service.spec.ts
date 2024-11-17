@@ -77,7 +77,9 @@ describe('GroupService (Unit)', () => {
       const groupId = new Types.ObjectId().toString();
       mockGroupRepository.findById.mockResolvedValueOnce(null);
 
-      await expect(service.findById(groupId)).rejects.toThrow(NotFoundException);
+      await expect(service.findById(groupId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
