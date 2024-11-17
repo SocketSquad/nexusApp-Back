@@ -6,18 +6,26 @@ import { CreateGroupDto } from '../dtos/create-group.dto';
 import { UpdatedGroupDto } from '../dtos/update-group.dt';
 import { IGroupRepository } from '../interfaces/group.repository.interface';
 
-
 @Injectable()
 export class GroupRepository implements IGroupRepository {
   constructor(
-    @InjectModel(Group.name) private readonly groupModel: Model<Group>
+    @InjectModel(Group.name) private readonly groupModel: Model<Group>,
   ) {}
 
-  async create(createGroupDto: CreateGroupDto, ownerId: string): Promise<Group> {
+  async create(
+    createGroupDto: CreateGroupDto,
+    ownerId: string,
+  ): Promise<Group> {
     const group = new this.groupModel({
       ...createGroupDto,
       owner: new Types.ObjectId(ownerId),
-      members: [{ userId: new Types.ObjectId(ownerId), role: 'admin', joinedAt: new Date() }],
+      members: [
+        {
+          userId: new Types.ObjectId(ownerId),
+          role: 'admin',
+          joinedAt: new Date(),
+        },
+      ],
     });
     return group.save();
   }
@@ -48,45 +56,59 @@ export class GroupRepository implements IGroupRepository {
     return this.groupModel.findByIdAndDelete(id).exec();
   }
 
-  async addMember(groupId: string, userId: string, role: string = 'member'): Promise<Group> {
-    return this.groupModel.findByIdAndUpdate(
-      groupId,
-      {
-        $push: {
-          members: {
-            userId: new Types.ObjectId(userId),
-            role,
-            joinedAt: new Date(),
+  async addMember(
+    groupId: string,
+    userId: string,
+    role: string = 'member',
+  ): Promise<Group> {
+    return this.groupModel
+      .findByIdAndUpdate(
+        groupId,
+        {
+          $push: {
+            members: {
+              userId: new Types.ObjectId(userId),
+              role,
+              joinedAt: new Date(),
+            },
           },
+          lastActivityAt: new Date(),
         },
-        lastActivityAt: new Date(),
-      },
-      { new: true }
-    ).exec();
+        { new: true },
+      )
+      .exec();
   }
 
   async removeMember(groupId: string, userId: string): Promise<Group> {
-    return this.groupModel.findByIdAndUpdate(
-      groupId,
-      {
-        $pull: { members: { userId: new Types.ObjectId(userId) } },
-        lastActivityAt: new Date(),
-      },
-      { new: true }
-    ).exec();
+    return this.groupModel
+      .findByIdAndUpdate(
+        groupId,
+        {
+          $pull: { members: { userId: new Types.ObjectId(userId) } },
+          lastActivityAt: new Date(),
+        },
+        { new: true },
+      )
+      .exec();
   }
 
-  async updateMemberRole(groupId: string, userId: string, newRole: string): Promise<Group> {
-    return this.groupModel.findOneAndUpdate(
-      {
-        _id: groupId,
-        'members.userId': new Types.ObjectId(userId),
-      },
-      {
-        $set: { 'members.$.role': newRole },
-        lastActivityAt: new Date(),
-      },
-      { new: true }
-    ).exec();
+  async updateMemberRole(
+    groupId: string,
+    userId: string,
+    newRole: string,
+  ): Promise<Group> {
+    return this.groupModel
+      .findOneAndUpdate(
+        {
+          _id: groupId,
+          'members.userId': new Types.ObjectId(userId),
+        },
+        {
+          $set: { 'members.$.role': newRole },
+          lastActivityAt: new Date(),
+        },
+        { new: true },
+      )
+      .exec();
   }
 }
