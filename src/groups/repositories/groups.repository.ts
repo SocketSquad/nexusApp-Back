@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Group } from '../schemas/group.schema';
 import { CreateGroupDto } from '../dtos/create-group.dto';
-import { UpdatedGroupDto } from '../dtos/update-group.dt';
+import { UpdatedGroupDto } from '../dtos/update-group.dto';
 import { IGroupRepository } from '../interfaces/group.repository.interface';
 
 @Injectable()
