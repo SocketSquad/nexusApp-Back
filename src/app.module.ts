@@ -10,7 +10,8 @@ import { GroupMessagesModule } from './group-messages/group-messages.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { FriendsModule } from './friends/friends.module';
 import { FriendsRequestsModule } from './friends-requests/friends-requests.module';
-
+import { SessionsModule } from './sessions/sessions.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +27,8 @@ import { FriendsRequestsModule } from './friends-requests/friends-requests.modul
     AttachmentsModule,
     FriendsModule,
     FriendsRequestsModule,
+    SessionsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
