@@ -8,6 +8,7 @@ import { ProfilesController } from './controllers/profiles.controller';
 import { ProfileService } from './providers/profile.service';
 import { UserRepository } from './repositories/user.repository';
 import { ProfileRepository } from './repositories/profile.repository';
+import { GroupService } from 'src/groups/providers/groups.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { ProfileRepository } from './repositories/profile.repository';
   ],
   controllers: [UsersController, ProfilesController],
   providers: [UserService, ProfileService, UserRepository, ProfileRepository],
-  exports: [],
+  exports: [GroupService],
 })
 export class UsersModule {}

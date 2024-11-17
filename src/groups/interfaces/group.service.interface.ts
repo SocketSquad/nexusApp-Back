@@ -1,6 +1,6 @@
 import { AddMemberDto } from "../dtos/add-member.dto";
 import { CreateGroupDto } from "../dtos/create-group.dto";
-import { UpdatedGroupDto } from "../dtos/update-group.dt";
+import { UpdatedGroupDto } from "../dtos/update-group.dto";
 import { Group } from "../schemas/group.schema";
 
 export interface IGroupService {
