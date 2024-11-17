@@ -16,6 +16,6 @@ import { ProfileRepository } from './repositories/profile.repository';
   ],
   controllers: [UsersController, ProfilesController],
   providers: [UserService, ProfileService, UserRepository, ProfileRepository],
-  exports: [],
+  exports: [UserService],
 })
 export class UsersModule {}
