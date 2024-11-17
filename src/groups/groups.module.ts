@@ -10,7 +10,7 @@ import { GroupRepository } from './repositories/groups.repository';
     MongooseModule.forFeature([{ name: Group.name, schema: GroupSchema }]),
   ],
   controllers: [GroupController],
-  providers: [GroupService,GroupRepository],
+  providers: [GroupService, GroupRepository],
   exports: [GroupService],
 })
 export class GroupsModule {}

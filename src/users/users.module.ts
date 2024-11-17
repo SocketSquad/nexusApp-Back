@@ -9,7 +9,6 @@ import { ProfileService } from './providers/profile.service';
 import { UserRepository } from './repositories/user.repository';
 import { ProfileRepository } from './repositories/profile.repository';
 
-
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
