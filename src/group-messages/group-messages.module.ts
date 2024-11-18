@@ -4,6 +4,8 @@ import {
   GroupMessage,
   GroupMessageSchema,
 } from './schemas/group-message.schema';
+import { GroupMessagesRepository } from './repositories/group-messages.repository';
+import { GroupMessagesService } from './providers/group-messages.service';
 
 @Module({
   imports: [
@@ -11,7 +13,16 @@ import {
       { name: GroupMessage.name, schema: GroupMessageSchema },
     ]),
   ],
-  providers: [],
-  exports: [],
+  providers: [
+    {
+      provide: 'GroupMessagesRepositoryInterface',
+      useClass: GroupMessagesRepository,
+    },
+    {
+      provide: 'GroupMessagesServiceInterface',
+      useClass: GroupMessagesService,
+    },
+  ],
+  exports: ['GroupMessagesServiceInterface'],
 })
 export class GroupMessagesModule {}
