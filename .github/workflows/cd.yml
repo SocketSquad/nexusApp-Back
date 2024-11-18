@@ -1,0 +1,58 @@
+name: CD Pipeline
+on:
+  push:
+    branches: 
+      - main
+
+env:
+  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull Docker image
+        run: |
+          echo "Pulling latest Docker image..."
+          sudo docker pull echaf/nexus-app-back:latest
+          
+      - name: Stop Old Container
+        run: |
+          echo "Stopping old container if exists..."
+          sudo docker rm -f nexus-app-back-container || true
+      
+      - name: Run Docker Container
+        id: run-container
+        run: sudo docker run -d -p 3001:3001 --name nexus-app-back-container -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e PORT=3001 -e JWT_SECRET="${{ secrets.JWT_SECRET }} echaf/nexus-app-back
+          
+      - name: Slack Notification on Deployment Success
+        if: success()
+        run: |
+          message="✅ Deployment successful for branch *${{ github.ref_name }}*"
+          curl -X POST \
+            -H 'Content-type: application/json' \
+            -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+            --data "{\"channel\":\"#nexus-app-back-deployment\",\"text\":\"$message\"}" \
+            https://slack.com/api/chat.postMessage
+          
+      - name: Rollback on Deployment Failure
+        if: failure()
+        run: |
+          echo "Deployment failed, rolling back..."
+          sudo docker rm -f nexus-app-back-container || true
+          sudo docker run -d \
+            -p 3001:3001 \
+            --name nexus-app-back-container \
+            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            -e PORT=3001 \
+            echaf/nexus-app-back:previous
+          
+      - name: Slack Notification on Deployment Failure
+        if: failure()
+        run: |
+          message="❌ Deployment failed for branch *${{ github.ref_name }}*\nInitiating rollback..."
+          curl -X POST \
+            -H 'Content-type: application/json' \
+            -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+            --data "{\"channel\":\"#nexus-app-back-deployment\",\"text\":\"$message\"}" \
+            https://slack.com/api/chat.postMessage
