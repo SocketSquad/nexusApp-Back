@@ -8,9 +8,7 @@ import { UpdateUserDto } from '../dtos/update-user.dto';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
 
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
@@ -44,15 +42,11 @@ export class UserRepository implements IUserRepository {
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
-    return this.userModel
-      .findByIdAndUpdate(userId, updateUserDto, { new: true })
-      .exec();
+    return this.userModel.findByIdAndUpdate(userId, updateUserDto, { new: true }).exec();
   }
 
   async updateOnlineStatus(userId: string, isOnline: boolean): Promise<User> {
-    return this.userModel
-      .findByIdAndUpdate(userId, { isOnline }, { new: true })
-      .exec();
+    return this.userModel.findByIdAndUpdate(userId, { isOnline }, { new: true }).exec();
   }
 
   async exists(email: string, username: string): Promise<boolean> {

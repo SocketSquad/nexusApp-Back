@@ -77,9 +77,7 @@ describe('GroupService (Unit)', () => {
       const groupId = new Types.ObjectId().toString();
       mockGroupRepository.findById.mockResolvedValueOnce(null);
 
-      await expect(service.findById(groupId)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findById(groupId)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -94,13 +92,7 @@ describe('GroupService (Unit)', () => {
         members: [{ userId: requesterId, role: 'member' }],
       });
 
-      await expect(
-        service.addMember(
-          groupId,
-          { userId, role: GroupRole.MEMBER },
-          requesterId,
-        ),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.addMember(groupId, { userId, role: GroupRole.MEMBER }, requesterId)).rejects.toThrow(ForbiddenException);
     });
   });
 });

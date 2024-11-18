@@ -10,9 +10,5 @@ export interface IGroupRepository {
   delete(id: string): Promise<Group>;
   addMember(groupId: string, userId: string, role: string): Promise<Group>;
   removeMember(groupId: string, userId: string): Promise<Group>;
-  updateMemberRole(
-    groupId: string,
-    userId: string,
-    newRole: string,
-  ): Promise<Group>;
+  updateMemberRole(groupId: string, userId: string, newRole: string): Promise<Group>;
 }

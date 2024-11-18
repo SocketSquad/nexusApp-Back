@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Put,
-  Body,
-  Param,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Put, Body, Param, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TransformInterceptor } from '../../utils/interceptors/transform.interceptor';
 import { ProfileService } from '../providers/profile.service';
@@ -38,14 +31,8 @@ export class ProfilesController {
     type: Profile,
   })
   @ApiResponse({ status: 404, description: 'Profile not found.' })
-  async updateProfile(
-    @Param('userId') userId: string,
-    @Body() updateProfileDto: UpdateProfileDto,
-  ): Promise<Profile> {
-    const profile = await this.profileService.updateProfile(
-      userId,
-      updateProfileDto,
-    );
+  async updateProfile(@Param('userId') userId: string, @Body() updateProfileDto: UpdateProfileDto): Promise<Profile> {
+    const profile = await this.profileService.updateProfile(userId, updateProfileDto);
     return profile;
   }
 
@@ -56,10 +43,7 @@ export class ProfilesController {
     description: 'The block status has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Profile not found.' })
-  async updateBlockStatus(
-    @Param('userId') userId: string,
-    @Body('isBlocked') isBlocked: boolean,
-  ) {
+  async updateBlockStatus(@Param('userId') userId: string, @Body('isBlocked') isBlocked: boolean) {
     return this.profileService.updateBlockStatus(userId, isBlocked);
   }
 }
