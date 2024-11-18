@@ -119,6 +119,10 @@ jobs:
         env:
           MONGODB_URI: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          
+      - name: Fail workflow if E2E tests fail
+        if: failure()
+        run: exit 1
 
   sonar-analysis:
     name: SonarQube Analysis
