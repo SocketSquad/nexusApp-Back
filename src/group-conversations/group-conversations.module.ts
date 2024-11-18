@@ -16,15 +16,9 @@ import { GroupConversationsService } from './providers/group-conversations.servi
   ],
   controllers: [GroupConversationsController],
   providers: [
-    {
-      provide: 'GroupConversationsRepositoryInterface',
-      useClass: GroupConversationsRepository,
-    },
-    {
-      provide: 'GroupConversationsServiceInterface',
-      useClass: GroupConversationsService,
-    },
+    GroupConversationsService,
+    GroupConversationsRepository, 
   ],
-  exports: ['GroupConversationsServiceInterface'],
+  exports: [],
 })
 export class GroupConversationsModule {}

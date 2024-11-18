@@ -15,16 +15,7 @@ import { GroupMessagesController } from './group-messages.controller';
     ]),
   ],
   controllers: [GroupMessagesController],
-  providers: [
-    {
-      provide: 'GroupMessagesRepositoryInterface',
-      useClass: GroupMessagesRepository,
-    },
-    {
-      provide: 'GroupMessagesServiceInterface',
-      useClass: GroupMessagesService,
-    },
-  ],
-  exports: ['GroupMessagesServiceInterface'],
+  providers: [ GroupMessagesRepository,GroupMessagesService],
+  exports: [],
 })
 export class GroupMessagesModule {}
