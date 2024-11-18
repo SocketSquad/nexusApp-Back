@@ -12,8 +12,8 @@ import { FriendsModule } from './friends/friends.module';
 import { FriendsRequestsModule } from './friends-requests/friends-requests.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { AuthModule } from './auth/auth.module';
-import { GatewayModule } from './gateways/gateway.module';
-
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,7 +31,8 @@ import { GatewayModule } from './gateways/gateway.module';
     FriendsRequestsModule,
     SessionsModule,
     AuthModule,
-    GatewayModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

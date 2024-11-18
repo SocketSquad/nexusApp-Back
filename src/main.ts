@@ -10,7 +10,7 @@ async function bootstrap() {
       origin: ['http://localhost:3000'],
       credentials: true,
     });
-
+        
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -18,7 +18,7 @@ async function bootstrap() {
       }),
     );
 
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 3001;
     await app.listen(port);
 
     console.log(`Application is running on: ${await app.getUrl()}`);
