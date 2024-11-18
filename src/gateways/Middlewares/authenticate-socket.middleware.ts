@@ -27,18 +27,13 @@ export class AuthenticateSocketMiddleware implements NestMiddleware {
         return next(new Error('Not Authenticated: Session ID missing'));
       }
 
-      const signedCookie = cookieParser.signedCookie(
-        CHAT_APP_SESSION_ID,
-        process.env.COOKIE_SECRET,
-      );
+      const signedCookie = cookieParser.signedCookie(CHAT_APP_SESSION_ID, process.env.COOKIE_SECRET);
 
       if (!signedCookie) {
         return next(new Error('Error signing cookie'));
       }
 
-      const sessionDB = await this.sessionModel
-        .findOne({ _id: signedCookie })
-        .exec();
+      const sessionDB = await this.sessionModel.findOne({ _id: signedCookie }).exec();
       if (!sessionDB) {
         return next(new Error('No session found'));
       }

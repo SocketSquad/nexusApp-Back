@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { GroupRepository } from '../repositories/groups.repository';
 import { CreateGroupDto } from '../dtos/create-group.dto';
 import { Group } from '../schemas/group.schema';
@@ -31,11 +27,7 @@ export class GroupService implements IGroupService {
     return group;
   }
 
-  async update(
-    id: string,
-    updateGroupDto: UpdatedGroupDto,
-    userId: string,
-  ): Promise<Group> {
+  async update(id: string, updateGroupDto: UpdatedGroupDto, userId: string): Promise<Group> {
     const group = await this.findById(id);
     if (group.owner.toString() !== userId) {
       throw new ForbiddenException('Only the group owner can update the group');
@@ -51,55 +43,29 @@ export class GroupService implements IGroupService {
     return this.groupRepository.delete(id);
   }
 
-  async addMember(
-    groupId: string,
-    addMemberDto: AddMemberDto,
-    requesterId: string,
-  ): Promise<Group> {
+  async addMember(groupId: string, addMemberDto: AddMemberDto, requesterId: string): Promise<Group> {
     const group = await this.findById(groupId);
 
     // Find the request member and check if he has permission
-    const requesterMember = group.members.find(
-      (m) => m.userId.toString() === requesterId,
-    );
-    if (
-      !requesterMember ||
-      (requesterMember.role !== 'admin' &&
-        group.owner.toString() !== requesterId)
-    ) {
+    const requesterMember = group.members.find((m) => m.userId.toString() === requesterId);
+    if (!requesterMember || (requesterMember.role !== 'admin' && group.owner.toString() !== requesterId)) {
       throw new ForbiddenException('No permission to add members');
     }
 
     // Check if user is already a member
-    if (
-      group.members.some((m) => m.userId.toString() === addMemberDto.userId)
-    ) {
+    if (group.members.some((m) => m.userId.toString() === addMemberDto.userId)) {
       throw new ForbiddenException('User is already a member of this group');
     }
 
-    return this.groupRepository.addMember(
-      groupId,
-      addMemberDto.userId,
-      addMemberDto.role,
-    );
+    return this.groupRepository.addMember(groupId, addMemberDto.userId, addMemberDto.role);
   }
 
-  async removeMember(
-    groupId: string,
-    memberId: string,
-    requesterId: string,
-  ): Promise<Group> {
+  async removeMember(groupId: string, memberId: string, requesterId: string): Promise<Group> {
     const group = await this.findById(groupId);
 
     // Find the request member and check if he has permission
-    const requesterMember = group.members.find(
-      (m) => m.userId.toString() === requesterId,
-    );
-    if (
-      !requesterMember ||
-      (requesterMember.role !== 'admin' &&
-        group.owner.toString() !== requesterId)
-    ) {
+    const requesterMember = group.members.find((m) => m.userId.toString() === requesterId);
+    if (!requesterMember || (requesterMember.role !== 'admin' && group.owner.toString() !== requesterId)) {
       throw new ForbiddenException('No permission to remove members');
     }
 
@@ -111,19 +77,12 @@ export class GroupService implements IGroupService {
     return this.groupRepository.removeMember(groupId, memberId);
   }
 
-  async updateMemberRole(
-    groupId: string,
-    memberId: string,
-    newRole: string,
-    requesterId: string,
-  ): Promise<Group> {
+  async updateMemberRole(groupId: string, memberId: string, newRole: string, requesterId: string): Promise<Group> {
     const group = await this.findById(groupId);
 
     // Check permission
     if (group.owner.toString() !== requesterId) {
-      throw new ForbiddenException(
-        'Only the group owner can update member roles',
-      );
+      throw new ForbiddenException('Only the group owner can update member roles');
     }
 
     // Forbidden to change owner's role

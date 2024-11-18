@@ -8,14 +8,9 @@ import { IGroupRepository } from '../interfaces/group.repository.interface';
 
 @Injectable()
 export class GroupRepository implements IGroupRepository {
-  constructor(
-    @InjectModel(Group.name) private readonly groupModel: Model<Group>,
-  ) {}
+  constructor(@InjectModel(Group.name) private readonly groupModel: Model<Group>) {}
 
-  async create(
-    createGroupDto: CreateGroupDto,
-    ownerId: string,
-  ): Promise<Group> {
+  async create(createGroupDto: CreateGroupDto, ownerId: string): Promise<Group> {
     const group = new this.groupModel({
       ...createGroupDto,
       owner: new Types.ObjectId(ownerId),
@@ -31,36 +26,22 @@ export class GroupRepository implements IGroupRepository {
   }
 
   async findAll(filter: any = {}): Promise<Group[]> {
-    return this.groupModel
-      .find(filter)
-      .populate('owner', 'username email')
-      .populate('members.userId', 'username email')
-      .exec();
+    return this.groupModel.find(filter).populate('owner', 'username email').populate('members.userId', 'username email').exec();
   }
 
   async findById(id: string): Promise<Group> {
-    return this.groupModel
-      .findById(id)
-      .populate('owner', 'username email')
-      .populate('members.userId', 'username email')
-      .exec();
+    return this.groupModel.findById(id).populate('owner', 'username email').populate('members.userId', 'username email').exec();
   }
 
   async update(id: string, updateGroupDto: UpdatedGroupDto): Promise<Group> {
-    return this.groupModel
-      .findByIdAndUpdate(id, updateGroupDto, { new: true })
-      .exec();
+    return this.groupModel.findByIdAndUpdate(id, updateGroupDto, { new: true }).exec();
   }
 
   async delete(id: string): Promise<Group> {
     return this.groupModel.findByIdAndDelete(id).exec();
   }
 
-  async addMember(
-    groupId: string,
-    userId: string,
-    role: string = 'member',
-  ): Promise<Group> {
+  async addMember(groupId: string, userId: string, role: string = 'member'): Promise<Group> {
     return this.groupModel
       .findByIdAndUpdate(
         groupId,
@@ -92,11 +73,7 @@ export class GroupRepository implements IGroupRepository {
       .exec();
   }
 
-  async updateMemberRole(
-    groupId: string,
-    userId: string,
-    newRole: string,
-  ): Promise<Group> {
+  async updateMemberRole(groupId: string, userId: string, newRole: string): Promise<Group> {
     return this.groupModel
       .findOneAndUpdate(
         {

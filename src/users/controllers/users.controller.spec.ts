@@ -129,9 +129,7 @@ describe('UsersController', () => {
     it('should throw NotFoundException if user not found', async () => {
       userService.findById.mockResolvedValue(null);
 
-      await expect(controller.getUserById('1')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(controller.getUserById('1')).rejects.toThrow(NotFoundException);
       expect(userService.findById).toHaveBeenCalledWith('1');
     });
   });
