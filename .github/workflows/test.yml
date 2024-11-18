@@ -118,6 +118,7 @@ jobs:
         run: npm run test:e2e
         env:
           MONGODB_URI: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   sonar-analysis:
     name: SonarQube Analysis
