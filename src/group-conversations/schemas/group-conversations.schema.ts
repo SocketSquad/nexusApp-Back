@@ -75,5 +75,4 @@ export class GroupConversation extends Document {
   lastMessageAt: Date;
 }
 
-export const GroupConversationSchema =
-  SchemaFactory.createForClass(GroupConversation);
+export const GroupConversationSchema = SchemaFactory.createForClass(GroupConversation);

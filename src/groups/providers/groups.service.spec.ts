@@ -92,13 +92,7 @@ describe('GroupService (Unit)', () => {
         members: [{ userId: requesterId, role: 'member' }],
       });
 
-      await expect(
-        service.addMember(
-          groupId,
-          { userId, role: GroupRole.MEMBER },
-          requesterId,
-        ),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.addMember(groupId, { userId, role: GroupRole.MEMBER }, requesterId)).rejects.toThrow(ForbiddenException);
     });
   });
 });

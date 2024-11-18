@@ -26,10 +26,7 @@ describe('ProfileService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [
-        ProfileService,
-        { provide: ProfileRepository, useValue: mockRepo },
-      ],
+      providers: [ProfileService, { provide: ProfileRepository, useValue: mockRepo }],
     }).compile();
 
     profileService = module.get<ProfileService>(ProfileService);
@@ -37,17 +34,13 @@ describe('ProfileService', () => {
 
   it('should find profile by userId', async () => {
     mockRepo.findByUserId.mockResolvedValue(mockProfile);
-    const result = await profileService.findProfileByUserId(
-      mockUserId.toString(),
-    );
+    const result = await profileService.findProfileByUserId(mockUserId.toString());
     expect(result).toEqual(mockProfile);
   });
 
   it('should throw when profile not found', async () => {
     mockRepo.findByUserId.mockResolvedValue(null);
-    await expect(
-      profileService.findProfileByUserId(mockUserId.toString()),
-    ).rejects.toThrow(ProfileNotFoundException);
+    await expect(profileService.findProfileByUserId(mockUserId.toString())).rejects.toThrow(ProfileNotFoundException);
   });
 
   it('should create profile', async () => {

@@ -32,11 +32,7 @@ export class GroupController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update group' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateGroupDto: UpdatedGroupDto,
-    @Body('userId') userId: string,
-  ) {
+  async update(@Param('id') id: string, @Body() updateGroupDto: UpdatedGroupDto, @Body('userId') userId: string) {
     return this.groupService.update(id, updateGroupDto, userId);
   }
 
@@ -48,32 +44,19 @@ export class GroupController {
 
   @Post(':id/members')
   @ApiOperation({ summary: 'Add member to group' })
-  async addMember(
-    @Param('id') id: string,
-    @Body() addMemberDto: AddMemberDto,
-    @Body('requesterId') requesterId: string,
-  ) {
+  async addMember(@Param('id') id: string, @Body() addMemberDto: AddMemberDto, @Body('requesterId') requesterId: string) {
     return this.groupService.addMember(id, addMemberDto, requesterId);
   }
 
   @Delete(':id/members/:memberId')
   @ApiOperation({ summary: 'Remove member from group' })
-  async removeMember(
-    @Param('id') id: string,
-    @Param('memberId') memberId: string,
-    @Body('requesterId') requesterId: string,
-  ) {
+  async removeMember(@Param('id') id: string, @Param('memberId') memberId: string, @Body('requesterId') requesterId: string) {
     return this.groupService.removeMember(id, memberId, requesterId);
   }
 
   @Put(':id/members/:memberId/role')
   @ApiOperation({ summary: 'Update member role' })
-  async updateMemberRole(
-    @Param('id') id: string,
-    @Param('memberId') memberId: string,
-    @Body('role') role: string,
-    @Body('requesterId') requesterId: string,
-  ) {
+  async updateMemberRole(@Param('id') id: string, @Param('memberId') memberId: string, @Body('role') role: string, @Body('requesterId') requesterId: string) {
     return this.groupService.updateMemberRole(id, memberId, role, requesterId);
   }
 }

@@ -49,5 +49,4 @@ export class DirectConversation extends Document {
   lastMessage?: LastMessage;
 }
 
-export const DirectConversationSchema =
-  SchemaFactory.createForClass(DirectConversation);
+export const DirectConversationSchema = SchemaFactory.createForClass(DirectConversation);
