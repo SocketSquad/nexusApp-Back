@@ -1,7 +1,7 @@
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions } from 'socket.io';
 import { Injectable, INestApplication } from '@nestjs/common';
-import { AuthenticateSocketMiddleware } from './middlewares/authenticate-socket.middleware';
+import { AuthenticateSocketMiddleware } from './Middlewares/authenticate-socket.middleware';
 
 @Injectable()
 export class WebsocketAdapter extends IoAdapter {
