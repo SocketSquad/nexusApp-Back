@@ -115,13 +115,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run integration tests
+        id: run-integration-tests
         run: npm run test:e2e
         env:
           MONGODB_URI: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          
+
       - name: Fail workflow if E2E tests fail
-        if: failure()
+        if: steps.run-integration-tests.outcome == 'failure'
         run: exit 1
 
   sonar-analysis:
