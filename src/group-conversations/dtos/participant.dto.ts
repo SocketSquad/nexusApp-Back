@@ -1,14 +1,10 @@
 import { 
     IsString, 
     IsNotEmpty, 
-    MinLength, 
-    MaxLength, 
-    IsArray, 
-    ValidateNested, 
     IsOptional, 
     IsDate 
   } from 'class-validator';
-  
+
   import { Type } from 'class-transformer';
 import { GroupRole } from '../../../src/utils/types';
 import { Types } from 'mongoose';
