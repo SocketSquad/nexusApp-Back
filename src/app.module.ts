@@ -1,13 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-import { ConversationsModule } from './conversations/conversations.module';
+import { DirectConversationsModule } from './direct-conversations/direct-conversations.module';
+import { GroupConversationsModule } from './group-conversations/group-conversations.module';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './groups/groups.module';
-import { MessagesModule } from './messages/messages.module';
-import { MessageAttachmentsModule } from './message-attachments/message-attachments.module';
+import { DirectMessagesModule } from './direct-messages/direct-messages.module';
+import { GroupMessagesModule } from './group-messages/group-messages.module';
+import { AttachmentsModule } from './attachments/attachments.module';
 import { FriendsModule } from './friends/friends.module';
 import { FriendsRequestsModule } from './friends-requests/friends-requests.module';
+import { SessionsModule } from './sessions/sessions.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,13 +19,17 @@ import { FriendsRequestsModule } from './friends-requests/friends-requests.modul
       isGlobal: true,
     }),
     DatabaseModule,
-    ConversationsModule,
+    DirectConversationsModule,
+    GroupConversationsModule,
     UsersModule,
     GroupsModule,
-    MessagesModule,
-    MessageAttachmentsModule,
+    DirectMessagesModule,
+    GroupMessagesModule,
+    AttachmentsModule,
     FriendsModule,
     FriendsRequestsModule,
+    SessionsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

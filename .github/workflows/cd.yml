@@ -23,7 +23,7 @@ jobs:
       
       - name: Run Docker Container
         id: run-container
-        run: sudo docker run -d -p 3001:3001 --name nexus-app-back-container -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e PORT=3001 echaf/nexus-app-back
+        run: sudo docker run -d -p 3001:3001 --name nexus-app-back-container -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e PORT=3001 -e JWT_SECRET="${{ secrets.JWT_SECRET }} echaf/nexus-app-back
           
       - name: Slack Notification on Deployment Success
         if: success()
