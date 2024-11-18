@@ -6,6 +6,7 @@ import {
 } from './schemas/group-message.schema';
 import { GroupMessagesRepository } from './repositories/group-messages.repository';
 import { GroupMessagesService } from './providers/group-messages.service';
+import { GroupMessagesController } from './group-messages.controller';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { GroupMessagesService } from './providers/group-messages.service';
       { name: GroupMessage.name, schema: GroupMessageSchema },
     ]),
   ],
+  controllers: [GroupMessagesController],
   providers: [
     {
       provide: 'GroupMessagesRepositoryInterface',
