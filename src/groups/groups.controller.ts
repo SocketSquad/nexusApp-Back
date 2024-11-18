@@ -3,7 +3,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GroupService } from './providers/groups.service';
 import { CreateGroupDto } from './dtos/create-group.dto';
-import { UpdatedGroupDto } from './dtos/update-group.dt';
+import { UpdatedGroupDto } from './dtos/update-group.dto';
 import { AddMemberDto } from './dtos/add-member.dto';
 
 @ApiTags('groups')
