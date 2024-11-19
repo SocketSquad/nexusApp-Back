@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { GroupPrivacy } from '@/utils/types';
+
 @Schema({ _id: false })
 class GroupMember {
   @Prop({
@@ -8,7 +9,7 @@ class GroupMember {
     ref: 'User',
     required: true,
   })
-  userId: MongooseSchema.Types.ObjectId;
+  userId: Types.ObjectId;
 
   @Prop({
     type: String,
@@ -49,7 +50,7 @@ export class Group extends Document {
     required: true,
     index: true,
   })
-  owner: MongooseSchema.Types.ObjectId;
+  owner: Types.ObjectId;
 
   @Prop({
     type: [GroupMember],

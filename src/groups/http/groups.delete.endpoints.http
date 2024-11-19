@@ -1,0 +1,2 @@
+DELETE http://localhost:3000/groups/673d234163d1c8cbd3305e5e
+Authorization: Bearer {{token}}
