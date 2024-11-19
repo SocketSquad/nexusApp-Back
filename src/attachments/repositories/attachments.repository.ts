@@ -11,7 +11,7 @@ import { Attachment } from '../schema/attachment.schema';
 export class AttachmentsRepository implements IAttachmentsRepository {
   constructor(
     @InjectModel(Attachment.name)
-    private attachmentModel: Model<Attachment>,
+    private readonly attachmentModel: Model<Attachment>,
   ) {}
 
   async create(
