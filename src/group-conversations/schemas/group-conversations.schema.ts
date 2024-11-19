@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { GroupRole } from '../../utils/types';
 
 @Schema({ _id: false })
 class GroupParticipant {
@@ -14,8 +13,8 @@ class GroupParticipant {
 
   @Prop({
     type: String,
-    enum: Object.values(GroupRole),
-    default: GroupRole.MEMBER,
+    enum: ['admin', 'member'],
+    default: 'member',
     required: true,
   })
   role: string;
@@ -41,6 +40,13 @@ class LastMessage {
 
   @Prop({ type: Date, default: Date.now })
   sentAt: Date;
+
+  @Prop({
+    type: String,
+    enum: ['text', 'image', 'file'],
+    default: 'text',
+  })
+  type: string;
 }
 
 @Schema({
@@ -64,6 +70,9 @@ export class GroupConversation extends Document {
 
   @Prop({ type: LastMessage })
   lastMessage?: LastMessage;
+
+  @Prop({ type: Date, default: Date.now })
+  lastMessageAt: Date;
 }
 
 export const GroupConversationSchema = SchemaFactory.createForClass(GroupConversation);
