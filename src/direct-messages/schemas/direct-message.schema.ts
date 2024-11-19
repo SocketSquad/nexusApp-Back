@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { MessageType } from '../../utils/types';
+import { MessageType } from '@/utils/types';
 @Schema({
   collection: 'direct_messages',
   timestamps: true,

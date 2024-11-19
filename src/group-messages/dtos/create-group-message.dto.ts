@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsEnum, IsArray, IsOptional, IsMongoId } from 'class-validator';
-import { MessageType } from '../../utils/types';
+import { MessageType } from '@/utils/types';
 
 export class CreateGroupMessageDto {
   @IsNotEmpty()
