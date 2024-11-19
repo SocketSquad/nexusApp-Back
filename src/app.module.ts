@@ -8,14 +8,12 @@ import { GroupsModule } from './groups/groups.module';
 import { DirectMessagesModule } from './direct-messages/direct-messages.module';
 import { GroupMessagesModule } from './group-messages/group-messages.module';
 import { AttachmentsModule } from './attachments/attachments.module';
-import { FriendsModule } from './friends/friends.module';
-import { FriendsRequestsModule } from './friends-requests/friends-requests.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MessagesModule } from './messages/messages.module';
-import { MessageAttachmentsModule } from './message-attachments/message-attachments.module';
+// import { MessagesModule } from './messages/messages.module';
+// import { MessageAttachmentsModule } from './message-attachments/message-attachments.module';
 import { FriendModule } from './friends/friends.module';
 import { FriendRequestModule } from './friends-requests/friends-requests.module';
 
@@ -32,12 +30,12 @@ import { FriendRequestModule } from './friends-requests/friends-requests.module'
     DirectMessagesModule,
     GroupMessagesModule,
     AttachmentsModule,
-    FriendsModule,
-    FriendsRequestsModule,
+    FriendModule,
+    FriendRequestModule ,
     SessionsModule,
     AuthModule,
-    MessagesModule,
-    MessageAttachmentsModule,
+    // MessagesModule,
+    // MessageAttachmentsModule,
     FriendModule,
     FriendRequestModule,
   ],
