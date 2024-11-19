@@ -68,9 +68,7 @@ describe('AuthController', () => {
     it('should throw UnauthorizedException when login fails', async () => {
       mockAuthService.login.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.login(loginDto)).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
     });
   });
 
