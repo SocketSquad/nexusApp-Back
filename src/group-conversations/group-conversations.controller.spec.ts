@@ -5,8 +5,6 @@ import { Types } from 'mongoose';
 import { CreateGroupConversationDto } from './dtos/create-group-conversations.dto';
 import { UpdateGroupConversationDto } from './dtos/update-group-conversations.dto';
 
-
-
 describe('GroupConversationsController', () => {
   let controller: GroupConversationsController;
   let mockService: jest.Mocked<GroupConversationsService>;
@@ -15,15 +13,15 @@ describe('GroupConversationsController', () => {
     _id: new Types.ObjectId(),
     name: 'Test Group',
     participants: [
-      { 
-        userId: new Types.ObjectId(), 
-        role: 'admin' 
+      {
+        userId: new Types.ObjectId(),
+        role: 'admin',
       },
-      { 
-        userId: new Types.ObjectId(), 
-        role: 'member' 
-      }
-    ]
+      {
+        userId: new Types.ObjectId(),
+        role: 'member',
+      },
+    ],
   };
 
   beforeEach(async () => {
@@ -39,10 +37,10 @@ describe('GroupConversationsController', () => {
             update: jest.fn(),
             delete: jest.fn(),
             addParticipant: jest.fn(),
-            removeParticipant: jest.fn()
-          }
-        }
-      ]
+            removeParticipant: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<GroupConversationsController>(GroupConversationsController);
@@ -53,14 +51,12 @@ describe('GroupConversationsController', () => {
     it('should create a new conversation', async () => {
       const createDto: CreateGroupConversationDto = {
         name: 'New Group',
-        participants: [
-          { userId: new Types.ObjectId().toString(), role: 'admin' }
-        ]
+        participants: [{ userId: new Types.ObjectId().toString(), role: 'admin' }],
       };
       const creatorId = createDto.participants[0].userId.toString();
 
       mockService.create.mockResolvedValue(mockConversation as any);
-      
+
       const result = await controller.createConversation(createDto, creatorId);
 
       expect(mockService.create).toHaveBeenCalledWith(createDto, creatorId);
@@ -101,10 +97,10 @@ describe('GroupConversationsController', () => {
       const conversationId = new Types.ObjectId().toString();
       const userId = new Types.ObjectId().toString();
       const updateDto: UpdateGroupConversationDto = {
-        name: 'Updated Group Name'
+        name: 'Updated Group Name',
       };
 
-      mockService.update.mockResolvedValue({...mockConversation, ...updateDto} as any);
+      mockService.update.mockResolvedValue({ ...mockConversation, ...updateDto } as any);
 
       const result = await controller.updateConversation(conversationId, updateDto, userId);
 
@@ -135,23 +131,12 @@ describe('GroupConversationsController', () => {
 
       mockService.addParticipant.mockResolvedValue({
         ...mockConversation,
-        participants: [
-          ...mockConversation.participants,
-          { userId: new Types.ObjectId(participantId), role: 'member' }
-        ]
+        participants: [...mockConversation.participants, { userId: new Types.ObjectId(participantId), role: 'member' }],
       } as any);
 
-      const result = await controller.addParticipant(
-        conversationId, 
-        participantId, 
-        addedById
-      );
+      const result = await controller.addParticipant(conversationId, participantId, addedById);
 
-      expect(mockService.addParticipant).toHaveBeenCalledWith(
-        conversationId, 
-        participantId, 
-        addedById
-      );
+      expect(mockService.addParticipant).toHaveBeenCalledWith(conversationId, participantId, addedById);
       expect(result.participants).toHaveLength(3);
     });
   });
@@ -164,20 +149,12 @@ describe('GroupConversationsController', () => {
 
       mockService.removeParticipant.mockResolvedValue({
         ...mockConversation,
-        participants: [mockConversation.participants[0]]
+        participants: [mockConversation.participants[0]],
       } as any);
 
-      const result = await controller.removeParticipant(
-        conversationId, 
-        participantId, 
-        removedById
-      );
+      const result = await controller.removeParticipant(conversationId, participantId, removedById);
 
-      expect(mockService.removeParticipant).toHaveBeenCalledWith(
-        conversationId, 
-        participantId, 
-        removedById
-      );
+      expect(mockService.removeParticipant).toHaveBeenCalledWith(conversationId, participantId, removedById);
       expect(result.participants).toHaveLength(1);
     });
   });
