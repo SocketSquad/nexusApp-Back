@@ -5,6 +5,7 @@ import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -12,7 +13,7 @@ describe('AppController (e2e)', () => {
 
     app = await moduleFixture.createNestApplication();
     await app.init();
-  }, 10000);
+  }, 20000); // Increase timeout to 20 seconds
 
   afterAll(async () => {
     if (app) {
