@@ -12,8 +12,6 @@ import { SessionsModule } from './sessions/sessions.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { MessagesModule } from './messages/messages.module';
-// import { MessageAttachmentsModule } from './message-attachments/message-attachments.module';
 import { FriendModule } from './friends/friends.module';
 import { FriendRequestModule } from './friends-requests/friends-requests.module';
 
@@ -34,8 +32,6 @@ import { FriendRequestModule } from './friends-requests/friends-requests.module'
     FriendRequestModule ,
     SessionsModule,
     AuthModule,
-    // MessagesModule,
-    // MessageAttachmentsModule,
     FriendModule,
     FriendRequestModule,
   ],
