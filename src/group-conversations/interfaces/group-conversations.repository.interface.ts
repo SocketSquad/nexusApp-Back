@@ -2,8 +2,6 @@ import { CreateGroupConversationDto } from '../dtos/create-group-conversations.d
 import { UpdateGroupConversationDto } from '../dtos/update-group-conversations.dto';
 import { GroupConversation } from '../schemas/group-conversations.schema';
 
-
-
 export interface IGroupConversationsRepository {
   create(createConversationDto: CreateGroupConversationDto): Promise<GroupConversation>;
   findById(id: string): Promise<GroupConversation | null>;

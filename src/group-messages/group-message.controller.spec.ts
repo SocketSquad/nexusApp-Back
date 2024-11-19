@@ -2,9 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GroupMessagesController } from './group-messages.controller';
 import { GroupMessagesService } from './providers/group-messages.service';
 import { CreateGroupMessageDto } from './dtos/create-group-message.dto';
-import { MessageType } from '../../src/utils/types';
+import { MessageType } from '@/utils/types';
 import { UpdateGroupMessageDto } from './dtos/update-group-message.dto';
-
 
 describe('GroupMessagesController', () => {
   let controller: GroupMessagesController;
@@ -103,9 +102,9 @@ describe('GroupMessagesController', () => {
     };
 
     it('should update a message successfully', async () => {
-      const mockUpdatedMessage = { 
-        _id: 'messageid', 
-        ...updateDto 
+      const mockUpdatedMessage = {
+        _id: 'messageid',
+        ...updateDto,
       };
       mockService.update.mockResolvedValue(mockUpdatedMessage);
 

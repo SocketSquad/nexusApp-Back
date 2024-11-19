@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { AttachmentType } from '../../utils/types';
+import { AttachmentType } from '@/utils/types';
 
 @Schema({
   collection: 'attachments',

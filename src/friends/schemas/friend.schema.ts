@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { FriendStatus } from '../../utils/types';
-export { FriendStatus } from '../../utils/types';
+import { FriendStatus } from '@/utils/types';
+
 @Schema({
   collection: 'friends',
   timestamps: true,

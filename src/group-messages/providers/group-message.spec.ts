@@ -3,7 +3,7 @@ import { GroupMessagesService } from '../providers/group-messages.service';
 import { GroupMessagesRepository } from '../repositories/group-messages.repository';
 import { CreateGroupMessageDto } from '../dtos/create-group-message.dto';
 import { UpdateGroupMessageDto } from '../dtos/update-group-message.dto';
-import { MessageType } from '../../utils/types';
+import { MessageType } from '@/utils/types';
 import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 
 describe('GroupMessagesService', () => {
@@ -61,7 +61,7 @@ describe('GroupMessagesService', () => {
         ...validCreateDto,
         content: 'Hello @john and @jane',
       };
-      
+
       mockRepository.create.mockResolvedValue(dtoWithMentions);
 
       const result = await service.create(dtoWithMentions);
