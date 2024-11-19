@@ -25,8 +25,8 @@ export class FriendRequestService {
 
     // Check for reverse request
     const reverseRequest = await this.friendRequestRepository.findBySenderAndReceiver(
-      receiverId,
-      senderId,
+      receiverId,  // This person would be the sender in the reverse request
+      senderId,    // This person would be the receiver in the reverse request
     );
 
     if (reverseRequest) {
