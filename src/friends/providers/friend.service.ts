@@ -1,38 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { Friend } from '../schemas/friend.schema';
 import { CreateFriendDto } from '../dtos/create-friend.dto';
 import { UpdateFriendDto } from '../dtos/update-friend.dto';
+import { IFriendRepository } from '../interfaces/friend.repository.interface';
+import { IFriendService } from '../interfaces/friend.service.interface';
 
 @Injectable()
-export class FriendService {
-  constructor(@InjectModel(Friend.name) private friendModel: Model<Friend>) {}
+export class FriendService implements IFriendService {
+  constructor(
+    @Inject('IFriendRepository')
+    private readonly friendRepository: IFriendRepository,
+  ) {}
 
-  /**
-   * Crée une nouvelle relation d'amitié
-   */
   async create(createFriendDto: CreateFriendDto): Promise<Friend> {
-    const newFriend = new this.friendModel(createFriendDto);
-    return newFriend.save();
+    return this.friendRepository.create(createFriendDto);
   }
 
-  /**
-   * Récupère les amis par userId
-   */
   async findByUserId(userId: string): Promise<Friend[]> {
-    return this.friendModel
-      .find({ $or: [{ senderId: userId }, { receiverId: userId }] })
-      .exec();
+    return this.friendRepository.findByUserId(userId);
   }
 
-  /**
-   * Met à jour le statut d'une relation
-   */
-  async updateStatus(friendId: string, updateFriendDto: UpdateFriendDto): Promise<Friend> {
-    const updatedFriend = await this.friendModel
-      .findByIdAndUpdate(friendId, { status: updateFriendDto.status }, { new: true })
-      .exec();
+  async updateStatus(
+    friendId: string,
+    updateFriendDto: UpdateFriendDto,
+  ): Promise<Friend> {
+    const updatedFriend = await this.friendRepository.updateStatus(
+      friendId,
+      updateFriendDto.status,
+    );
 
     if (!updatedFriend) {
       throw new NotFoundException('Relation non trouvée');
@@ -40,11 +35,7 @@ export class FriendService {
     return updatedFriend;
   }
 
-  /**
-   * Supprime une relation d'amitié par ID
-   */
   async delete(friendId: string): Promise<boolean> {
-    const result = await this.friendModel.findByIdAndDelete(friendId).exec();
-    return !!result;
+    return this.friendRepository.delete(friendId);
   }
 }

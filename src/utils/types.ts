@@ -14,8 +14,8 @@ export enum AttachmentStatus {
 // Friend types
 
 export enum FriendStatus {
-  PENDING = 'pending',
-  ACCEPTED = 'accepted',
-  BLOCKED = 'blocked',
-  REJECTED='rejected',
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  BLOCKED = 'BLOCKED',
 }

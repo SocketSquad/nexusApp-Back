@@ -1,5 +1,3 @@
-
-
 import { Document } from 'mongoose';
 import { FriendStatus } from '../../utils/types';
 

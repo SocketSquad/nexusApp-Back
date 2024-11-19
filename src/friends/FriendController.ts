@@ -10,9 +10,9 @@ import {
   HttpStatus,
   Patch,
 } from '@nestjs/common';
-import { FriendService } from '../providers/friend.service';
-import { CreateFriendDto } from '../dtos/create-friend.dto';
-import { UpdateFriendDto } from '../dtos/update-friend.dto';
+import { FriendService } from './providers/friend.service';
+import { CreateFriendDto } from './dtos/create-friend.dto';
+import { UpdateFriendDto } from './dtos/update-friend.dto';
 
 @Controller('friends')
 export class FriendController {
@@ -33,7 +33,10 @@ export class FriendController {
   async getFriendsByUserId(@Param('userId') userId: string) {
     const friends = await this.friendService.findByUserId(userId);
     if (!friends) {
-      throw new HttpException('Aucun ami trouvé pour cet utilisateur', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Aucun ami trouvé pour cet utilisateur',
+        HttpStatus.NOT_FOUND,
+      );
     }
     return friends;
   }
@@ -46,7 +49,10 @@ export class FriendController {
     @Param('id') friendId: string,
     @Body() updateFriendDto: UpdateFriendDto,
   ) {
-    const updatedFriend = await this.friendService.updateStatus(friendId, updateFriendDto);
+    const updatedFriend = await this.friendService.updateStatus(
+      friendId,
+      updateFriendDto,
+    );
     if (!updatedFriend) {
       throw new HttpException('Relation non trouvée', HttpStatus.NOT_FOUND);
     }

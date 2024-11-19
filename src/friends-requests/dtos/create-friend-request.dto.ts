@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty } from 'class-validator';
 
 export class CreateFriendRequestDto {
   @IsNotEmpty()
-  @IsString()
+  @IsMongoId()
   senderId: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsMongoId()
   receiverId: string;
 }

@@ -1,40 +1,69 @@
-import { Injectable ,NotFoundException  } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { IFriendRequest } from '../interfaces/friend-request.interface';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { FriendRequestRepository } from '../repositories/friend-request.repository';
 import { CreateFriendRequestDto } from '../dtos/create-friend-request.dto';
-import { UpdateFriendRequestDto } from '../dtos/update-friend-request.dto';
-import { FriendRequestNotFoundException } from '../exeptions/friend-request-not-found.exception';
-
+import { FriendRequest } from '../schemas/friend-request.schema';
+import { FriendStatus } from '../../utils/types';
 
 @Injectable()
 export class FriendRequestService {
   constructor(
-    @InjectModel('FriendRequest') private readonly friendRequestModel: Model<IFriendRequest>,
+    private readonly friendRequestRepository: FriendRequestRepository,
   ) {}
 
-  async create(createFriendRequestDto: CreateFriendRequestDto): Promise<IFriendRequest> {
-    const newRequest = new this.friendRequestModel(createFriendRequestDto);
-    return newRequest.save();
-  }
+  async create(createFriendRequestDto: CreateFriendRequestDto): Promise<FriendRequest> {
+    const { senderId, receiverId } = createFriendRequestDto;
 
-  async getById(id: string): Promise<IFriendRequest> {
-    try {
-      return await this.friendRequestModel.findById(id).exec();
-    } catch (error) {
-      throw new NotFoundException(`Friend request with ID ${id} not found.`);
+    // Check if request already exists
+    const existingRequest = await this.friendRequestRepository.findBySenderAndReceiver(
+      senderId,
+      receiverId,
+    );
+
+    if (existingRequest) {
+      throw new BadRequestException('Friend request already exists');
     }
-  }
-  
 
-  async updateStatus(
-    id: string,
-    updateFriendRequestDto: UpdateFriendRequestDto,
-  ): Promise<IFriendRequest> {
-    const updatedRequest = await this.friendRequestModel.findByIdAndUpdate(id, updateFriendRequestDto, {
-      new: true,
-    });
-    if (!updatedRequest) throw new FriendRequestNotFoundException();
-    return updatedRequest;
+    // Check for reverse request
+    const reverseRequest = await this.friendRequestRepository.findBySenderAndReceiver(
+      receiverId,
+      senderId,
+    );
+
+    if (reverseRequest) {
+      throw new BadRequestException('Reverse friend request already exists');
+    }
+
+    return this.friendRequestRepository.create(createFriendRequestDto);
+  }
+
+  async findAllByUser(userId: string): Promise<FriendRequest[]> {
+    return this.friendRequestRepository.findAllByUser(userId);
+  }
+
+  async acceptRequest(requestId: string): Promise<FriendRequest> {
+    const request = await this.friendRequestRepository.findById(requestId);
+    if (!request) {
+      throw new NotFoundException('Friend request not found');
+    }
+
+    return this.friendRequestRepository.updateStatus(requestId, FriendStatus.ACCEPTED);
+  }
+
+  async rejectRequest(requestId: string): Promise<FriendRequest> {
+    const request = await this.friendRequestRepository.findById(requestId);
+    if (!request) {
+      throw new NotFoundException('Friend request not found');
+    }
+
+    return this.friendRequestRepository.updateStatus(requestId, FriendStatus.REJECTED);
+  }
+
+  async cancelRequest(requestId: string): Promise<FriendRequest> {
+    const request = await this.friendRequestRepository.findById(requestId);
+    if (!request) {
+      throw new NotFoundException('Friend request not found');
+    }
+
+    return this.friendRequestRepository.delete(requestId);
   }
 }
