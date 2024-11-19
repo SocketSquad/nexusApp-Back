@@ -9,7 +9,6 @@ import { MessageQueryDto } from './dtos/message-query.dto';
 
 describe('DirectMessageController', () => {
   let controller: DirectMessageController;
-  let service: DirectMessageService;
 
   const mockMessage = {
     _id: new Types.ObjectId(),
@@ -44,7 +43,6 @@ describe('DirectMessageController', () => {
     }).compile();
 
     controller = module.get<DirectMessageController>(DirectMessageController);
-    service = module.get<DirectMessageService>(DirectMessageService);
   });
 
   afterEach(() => {

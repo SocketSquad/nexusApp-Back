@@ -6,7 +6,6 @@ import { Types } from 'mongoose';
 
 describe('FriendRequestController', () => {
   let controller: FriendRequestController;
-  let service: FriendRequestService;
 
   const mockFriendRequestService = {
     create: jest.fn(),
@@ -28,7 +27,6 @@ describe('FriendRequestController', () => {
     }).compile();
 
     controller = module.get<FriendRequestController>(FriendRequestController);
-    service = module.get<FriendRequestService>(FriendRequestService);
   });
 
   afterEach(() => {

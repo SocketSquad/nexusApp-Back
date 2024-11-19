@@ -7,7 +7,6 @@ import { MessageType } from '../../utils/types';
 
 describe('DirectMessageService', () => {
   let service: DirectMessageService;
-  let repository: DirectMessageRepository;
 
   const mockMessage = {
     _id: new Types.ObjectId(),
@@ -42,7 +41,6 @@ describe('DirectMessageService', () => {
     }).compile();
 
     service = module.get<DirectMessageService>(DirectMessageService);
-    repository = module.get<DirectMessageRepository>(DirectMessageRepository);
   });
 
   afterEach(() => {
