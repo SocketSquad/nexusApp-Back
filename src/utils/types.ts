@@ -17,9 +17,10 @@ export enum MessageType {
 // Friend types
 
 export enum FriendStatus {
-  PENDING = 'pending',
-  ACCEPTED = 'accepted',
-  BLOCKED = 'blocked',
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  BLOCKED = 'BLOCKED',
 }
 
 // Group privacy
