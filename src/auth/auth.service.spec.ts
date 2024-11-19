@@ -55,7 +55,7 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException when password is invalid', async () => {
       const mockUser = {
         email: 'test-user@example.test',
-        password: 'test-hashed-password',
+        password: 'password',
       };
       mockUserService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
@@ -66,7 +66,7 @@ describe('AuthService', () => {
     it('should return user when credentials are valid', async () => {
       const mockUser = {
         email: 'test-user@example.test',
-        password: process.env.TEST_USER_PASSWORD,
+        password: 'password',
       };
       mockUserService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);

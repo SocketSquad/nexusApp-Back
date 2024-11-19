@@ -14,7 +14,7 @@ describe('AuthController', () => {
     id: '507f1f77bcf86cd799439011',
     email: 'test@example.com',
     username: 'testuser',
-    password: process.env.TEST_USER_PASSWORD,
+    password: 'password',
   } as const;
 
   const mockAuthService = {

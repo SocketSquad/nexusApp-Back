@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, IsOptional, IsDate } from 'class-validator';
 
 import { Type } from 'class-transformer';
-import { GroupRole } from '../../../src/utils/types';
+import { GroupRole } from '@/utils/types';
 import { Types } from 'mongoose';
 
 export class ParticipantDto {

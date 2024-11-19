@@ -3,7 +3,7 @@ import { GroupMessagesRepository } from '../repositories/group-messages.reposito
 import { CreateGroupMessageDto } from '../dtos/create-group-message.dto';
 import { UpdateGroupMessageDto } from '../dtos/update-group-message.dto';
 import { GroupMessage } from '../schemas/group-message.schema';
-import { MessageType } from '../../utils/types';
+import { MessageType } from '@/utils/types';
 import { IGroupMessagesService } from '../interfaces/group-messages.service.interface';
 
 @Injectable()
