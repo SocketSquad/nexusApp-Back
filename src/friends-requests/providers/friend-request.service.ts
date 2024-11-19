@@ -15,8 +15,8 @@ export class FriendRequestService {
 
     // Check if request already exists
     const existingRequest = await this.friendRequestRepository.findBySenderAndReceiver(
-      senderId,
-      receiverId,
+      senderId,    // Original sender
+      receiverId,  // Original receiver
     );
 
     if (existingRequest) {

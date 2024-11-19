@@ -25,7 +25,7 @@ export class FriendRequestRepository {
     return this.friendRequestModel.findOne(filter).exec();
   }
 
-  async findBySenderAndReceiver(senderId: string, receiverId: string): Promise<FriendRequest> {
+  async findBySenderAndReceiver(senderId: string, receiverId: string): Promise<FriendRequest | null> {
     return this.friendRequestModel.findOne({ senderId, receiverId }).exec();
   }
 
