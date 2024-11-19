@@ -29,6 +29,8 @@ export class GroupService implements IGroupService {
 
   async update(id: string, updateGroupDto: UpdatedGroupDto, userId: string): Promise<Group> {
     const group = await this.findById(id);
+    console.log("group owner",group.owner);
+    console.log("userId",userId);
     if (group.owner.toString() !== userId) {
       throw new ForbiddenException('Only the group owner can update the group');
     }

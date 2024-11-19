@@ -1,26 +1,29 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, Logger, UseGuards, Req } from '@nestjs/common';
 
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GroupService } from './providers/groups.service';
 import { CreateGroupDto } from './dtos/create-group.dto';
 import { UpdatedGroupDto } from './dtos/update-group.dto';
 import { AddMemberDto } from './dtos/add-member.dto';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 
 @ApiTags('groups')
 @Controller('groups')
+@UseGuards(JwtAuthGuard)
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new group' })
   @ApiResponse({ status: 201, description: 'Group created successfully.' })
-  async create(@Body() createGroupDto: CreateGroupDto, @Query('userId') userId: string) {
+  async create(@Body() createGroupDto: CreateGroupDto, @Req() req: any) {
+    const userId = req.user.userId;
     return this.groupService.create(createGroupDto, userId);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all groups' })
-  async findAll(@Query('privacy') privacy?: string) {
+  async findAll( @Query('privacy') privacy?: string) {
     return this.groupService.findAll(privacy);
   }
 
@@ -32,7 +35,8 @@ export class GroupController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update group' })
-  async update(@Param('id') id: string, @Body() updateGroupDto: UpdatedGroupDto, @Body('userId') userId: string) {
+  async update(@Param('id') id: string, @Body() updateGroupDto: UpdatedGroupDto, @Req() req: any) {
+    const userId : string = req.user.userId;
     return this.groupService.update(id, updateGroupDto, userId);
   }
 

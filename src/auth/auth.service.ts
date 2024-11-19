@@ -21,11 +21,7 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
-    const result = {
-      email: user.email,
-    };
-    return result;
+    return user;
   }
 
   async login(loginDto: LoginDto) {
