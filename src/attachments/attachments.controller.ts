@@ -1,4 +1,4 @@
-import {Controller,Get,Post,Delete,Param,Body,Query,UseGuards,Request,} from '@nestjs/common';
+import {Controller,Get,Post,Delete,Param,Body,Query,Request,} from '@nestjs/common';
 import { AttachmentsService } from './providers/attachments.service';
 import { CreateAttachmentDto } from './dtos/create-attachments.dto';
 import { QueryAttachmentDto } from './dtos/query-attachments.dto';
