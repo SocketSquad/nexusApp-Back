@@ -3,11 +3,7 @@ import { GroupConversationsService } from './group-conversations.service';
 import { GroupConversationsRepository } from '../repositories/group-conversations.repository';
 import { CreateGroupConversationDto } from '../dtos/create-group-conversations.dto';
 import { UpdateGroupConversationDto } from '../dtos/update-group-conversations.dto';
-import { 
-  NotFoundException, 
-  ForbiddenException, 
-  BadRequestException 
-} from '@nestjs/common';
+import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { Types } from 'mongoose';
 
 describe('GroupConversationsService', () => {
@@ -46,35 +42,35 @@ describe('GroupConversationsService', () => {
     it('should create a group conversation with creator as admin', async () => {
       const createDto: CreateGroupConversationDto = {
         name: 'Test Conversation',
-        participants: [
-          { userId: mockUserId2, role: 'member' }
-        ]
+        participants: [{ userId: mockUserId2, role: 'member' }],
       };
 
       const mockCreatedConversation = {
         ...createDto,
         participants: [
           { userId: mockUserId2, role: 'member' },
-          { userId: mockUserId1, role: 'admin' }
-        ]
+          { userId: mockUserId1, role: 'admin' },
+        ],
       };
 
       (mockRepository.create as jest.Mock).mockResolvedValue(mockCreatedConversation);
 
       const result = await service.create(createDto, mockUserId1);
 
-      expect(mockRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        participants: expect.arrayContaining([
-          expect.objectContaining({ 
-            userId: mockUserId1, 
-            role: 'admin' 
-          }),
-          expect.objectContaining({ 
-            userId: mockUserId2, 
-            role: 'member' 
-          })
-        ])
-      }));
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          participants: expect.arrayContaining([
+            expect.objectContaining({
+              userId: mockUserId1,
+              role: 'admin',
+            }),
+            expect.objectContaining({
+              userId: mockUserId2,
+              role: 'member',
+            }),
+          ]),
+        }),
+      );
       expect(result).toEqual(mockCreatedConversation);
     });
 
@@ -83,8 +79,8 @@ describe('GroupConversationsService', () => {
         name: 'Test Conversation',
         participants: [
           { userId: mockUserId1, role: 'member' },
-          { userId: mockUserId1, role: 'admin' }
-        ]
+          { userId: mockUserId1, role: 'admin' },
+        ],
       };
 
       await expect(service.create(createDto, mockUserId1)).rejects.toThrow(BadRequestException);
@@ -96,9 +92,7 @@ describe('GroupConversationsService', () => {
       const mockConversation = {
         _id: mockConversationId,
         name: 'Test Conversation',
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'admin' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
@@ -112,9 +106,7 @@ describe('GroupConversationsService', () => {
       const mockConversation = {
         _id: mockConversationId,
         name: 'Test Conversation',
-        participants: [
-          { userId: { toString: () => mockUserId2 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId2 }, role: 'admin' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
@@ -132,20 +124,18 @@ describe('GroupConversationsService', () => {
   describe('update', () => {
     it('should update conversation when user is an admin', async () => {
       const updateDto: UpdateGroupConversationDto = {
-        name: 'Updated Conversation'
+        name: 'Updated Conversation',
       };
 
       const mockConversation = {
         _id: mockConversationId,
         name: 'Original Conversation',
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'admin' }],
       };
 
       const mockUpdatedConversation = {
         ...mockConversation,
-        name: 'Updated Conversation'
+        name: 'Updated Conversation',
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
@@ -158,22 +148,18 @@ describe('GroupConversationsService', () => {
 
     it('should throw ForbiddenException when user is not an admin', async () => {
       const updateDto: UpdateGroupConversationDto = {
-        name: 'Updated Conversation'
+        name: 'Updated Conversation',
       };
 
       const mockConversation = {
         _id: mockConversationId,
         name: 'Original Conversation',
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'member' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'member' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
 
-      await expect(
-        service.update(mockConversationId, updateDto, mockUserId1)
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.update(mockConversationId, updateDto, mockUserId1)).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -181,9 +167,7 @@ describe('GroupConversationsService', () => {
     it('should delete conversation when user is an admin', async () => {
       const mockConversation = {
         _id: mockConversationId,
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'admin' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
@@ -197,17 +181,13 @@ describe('GroupConversationsService', () => {
     it('should throw NotFoundException when delete fails', async () => {
       const mockConversation = {
         _id: mockConversationId,
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'admin' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
       (mockRepository.delete as jest.Mock).mockResolvedValue(false);
 
-      await expect(
-        service.delete(mockConversationId, mockUserId1)
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.delete(mockConversationId, mockUserId1)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -215,27 +195,18 @@ describe('GroupConversationsService', () => {
     it('should add participant when user is an admin', async () => {
       const mockConversation = {
         _id: mockConversationId,
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'admin' }],
       };
 
       const mockUpdatedConversation = {
         ...mockConversation,
-        participants: [
-          ...mockConversation.participants,
-          { userId: { toString: () => mockUserId2 }, role: 'member' }
-        ]
+        participants: [...mockConversation.participants, { userId: { toString: () => mockUserId2 }, role: 'member' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
       (mockRepository.addParticipant as jest.Mock).mockResolvedValue(mockUpdatedConversation);
 
-      const result = await service.addParticipant(
-        mockConversationId, 
-        mockUserId2, 
-        mockUserId1
-      );
+      const result = await service.addParticipant(mockConversationId, mockUserId2, mockUserId1);
 
       expect(result).toEqual(mockUpdatedConversation);
     });
@@ -243,20 +214,12 @@ describe('GroupConversationsService', () => {
     it('should throw ForbiddenException when user is not an admin', async () => {
       const mockConversation = {
         _id: mockConversationId,
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'member' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'member' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
 
-      await expect(
-        service.addParticipant(
-          mockConversationId, 
-          mockUserId2, 
-          mockUserId1
-        )
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.addParticipant(mockConversationId, mockUserId2, mockUserId1)).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -266,25 +229,19 @@ describe('GroupConversationsService', () => {
         _id: mockConversationId,
         participants: [
           { userId: { toString: () => mockUserId1 }, role: 'admin' },
-          { userId: { toString: () => mockUserId2 }, role: 'member' }
-        ]
+          { userId: { toString: () => mockUserId2 }, role: 'member' },
+        ],
       };
 
       const mockUpdatedConversation = {
         ...mockConversation,
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'admin' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
       (mockRepository.removeParticipant as jest.Mock).mockResolvedValue(mockUpdatedConversation);
 
-      const result = await service.removeParticipant(
-        mockConversationId, 
-        mockUserId2, 
-        mockUserId1
-      );
+      const result = await service.removeParticipant(mockConversationId, mockUserId2, mockUserId1);
 
       expect(result).toEqual(mockUpdatedConversation);
     });
@@ -292,20 +249,12 @@ describe('GroupConversationsService', () => {
     it('should throw ForbiddenException when trying to remove last admin', async () => {
       const mockConversation = {
         _id: mockConversationId,
-        participants: [
-          { userId: { toString: () => mockUserId1 }, role: 'admin' }
-        ]
+        participants: [{ userId: { toString: () => mockUserId1 }, role: 'admin' }],
       };
 
       (mockRepository.findById as jest.Mock).mockResolvedValue(mockConversation);
 
-      await expect(
-        service.removeParticipant(
-          mockConversationId, 
-          mockUserId1, 
-          mockUserId1
-        )
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.removeParticipant(mockConversationId, mockUserId1, mockUserId1)).rejects.toThrow(ForbiddenException);
     });
   });
 });

@@ -61,7 +61,7 @@ describe('GroupMessagesService', () => {
         ...validCreateDto,
         content: 'Hello @john and @jane',
       };
-      
+
       mockRepository.create.mockResolvedValue(dtoWithMentions);
 
       const result = await service.create(dtoWithMentions);

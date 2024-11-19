@@ -6,7 +6,6 @@ import { GroupConversation } from '../schemas/group-conversations.schema';
 import { CreateGroupConversationDto } from '../dtos/create-group-conversations.dto';
 import { UpdateGroupConversationDto } from '../dtos/update-group-conversations.dto';
 
-
 @Injectable()
 export class GroupConversationsRepository implements IGroupConversationsRepository {
   constructor(
@@ -16,7 +15,7 @@ export class GroupConversationsRepository implements IGroupConversationsReposito
 
   async create(createConversationDto: CreateGroupConversationDto): Promise<GroupConversation> {
     // Convert participant user IDs to ObjectId
-    const participants = createConversationDto.participants.map(participant => ({
+    const participants = createConversationDto.participants.map((participant) => ({
       userId: new Types.ObjectId(participant.userId),
       role: participant.role || 'member',
       lastRead: participant.lastRead || null,
@@ -32,10 +31,7 @@ export class GroupConversationsRepository implements IGroupConversationsReposito
   }
 
   async findById(id: string): Promise<GroupConversation | null> {
-    return this.groupConversationModel
-      .findById(id)
-      .populate('participants.userId', 'username avatar')
-      .exec();
+    return this.groupConversationModel.findById(id).populate('participants.userId', 'username avatar').exec();
   }
 
   async findByUser(userId: string): Promise<GroupConversation[]> {
@@ -48,69 +44,54 @@ export class GroupConversationsRepository implements IGroupConversationsReposito
       .exec();
   }
 
-  async update(
-    id: string, 
-    updateConversationDto: UpdateGroupConversationDto
-  ): Promise<GroupConversation | null> {
+  async update(id: string, updateConversationDto: UpdateGroupConversationDto): Promise<GroupConversation | null> {
     // If updating participants, convert user IDs to ObjectId
     if (updateConversationDto.participants) {
-      updateConversationDto.participants = updateConversationDto.participants.map(participant => ({
+      updateConversationDto.participants = updateConversationDto.participants.map((participant) => ({
         ...participant,
         userId: new Types.ObjectId(participant.userId),
       }));
     }
 
-    return this.groupConversationModel
-      .findByIdAndUpdate(id, updateConversationDto, { new: true })
-      .populate('participants.userId', 'username avatar')
-      .exec();
+    return this.groupConversationModel.findByIdAndUpdate(id, updateConversationDto, { new: true }).populate('participants.userId', 'username avatar').exec();
   }
-
- 
 
   async delete(id: string): Promise<boolean> {
     const result = await this.groupConversationModel.findByIdAndDelete(id).exec();
     return !!result;
   }
 
-  async addParticipant(
-    conversationId: string, 
-    userId: string, 
-    role: string = 'member'
-  ): Promise<GroupConversation | null> {
+  async addParticipant(conversationId: string, userId: string, role: string = 'member'): Promise<GroupConversation | null> {
     return this.groupConversationModel
       .findByIdAndUpdate(
         conversationId,
         {
-          $addToSet: { 
-            participants: { 
-              userId: new Types.ObjectId(userId), 
+          $addToSet: {
+            participants: {
+              userId: new Types.ObjectId(userId),
               role,
-              lastRead: null 
-            } 
-          }
+              lastRead: null,
+            },
+          },
         },
-        { new: true }
+        { new: true },
       )
       .populate('participants.userId', 'username avatar')
       .exec();
   }
 
-  async removeParticipant(
-    conversationId: string, 
-    userId: string
-  ): Promise<GroupConversation | null> {
+  async removeParticipant(conversationId: string, userId: string): Promise<GroupConversation | null> {
     return this.groupConversationModel
       .findByIdAndUpdate(
         conversationId,
         {
-          $pull: { 
-            participants: { 
-              userId: new Types.ObjectId(userId) 
-            } 
-          }
+          $pull: {
+            participants: {
+              userId: new Types.ObjectId(userId),
+            },
+          },
         },
-        { new: true }
+        { new: true },
       )
       .populate('participants.userId', 'username avatar')
       .exec();
