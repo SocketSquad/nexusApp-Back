@@ -60,18 +60,23 @@ describe('AuthService', () => {
       mockUserService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.validateUser('test-user@example.test', 'wrong-password')).rejects.toThrow(UnauthorizedException);
+      await expect(
+        service.validateUser('test-user@example.test', 'wrong-password'),
+      ).rejects.toThrow(UnauthorizedException);
     });
 
     it('should return user when credentials are valid', async () => {
       const mockUser = {
         email: 'test-user@example.test',
-        password: 'test-hashed-password',
+        password: process.env.TEST_USER_PASSWORD,
       };
       mockUserService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await service.validateUser('test-user@example.test', 'test-password');
+      const result = await service.validateUser(
+        'test-user@example.test',
+        'test-password',
+      );
       expect(result).toEqual({ email: mockUser.email });
     });
   });
