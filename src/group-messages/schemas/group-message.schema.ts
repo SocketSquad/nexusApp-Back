@@ -47,6 +47,9 @@ export class GroupMessage extends Document {
     default: [],
   })
   attachments: MongooseSchema.Types.ObjectId[];
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const GroupMessageSchema = SchemaFactory.createForClass(GroupMessage);

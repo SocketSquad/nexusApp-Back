@@ -4,6 +4,9 @@ import {
   GroupConversation,
   GroupConversationSchema,
 } from './schemas/group-conversations.schema';
+import { GroupConversationsController } from './group-conversations.controller';
+import { GroupConversationsRepository } from './repositories/group-conversations.repository';
+import { GroupConversationsService } from './providers/group-conversations.service';
 
 @Module({
   imports: [
@@ -11,8 +14,11 @@ import {
       { name: GroupConversation.name, schema: GroupConversationSchema },
     ]),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [GroupConversationsController],
+  providers: [
+    GroupConversationsService,
+    GroupConversationsRepository, 
+  ],
   exports: [],
 })
 export class GroupConversationsModule {}

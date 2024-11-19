@@ -96,11 +96,7 @@ describe('GroupController (Integration)', () => {
 
       const result = await controller.update(groupId, updateGroupDto, userId);
 
-      expect(service.update).toHaveBeenCalledWith(
-        groupId,
-        updateGroupDto,
-        userId,
-      );
+      expect(service.update).toHaveBeenCalledWith(groupId, updateGroupDto, userId);
       expect(result).toBeDefined();
     });
   });
@@ -114,17 +110,9 @@ describe('GroupController (Integration)', () => {
       };
       const requesterId = mockGroup.owner.toString();
 
-      const result = await controller.addMember(
-        groupId,
-        addMemberDto,
-        requesterId,
-      );
+      const result = await controller.addMember(groupId, addMemberDto, requesterId);
 
-      expect(service.addMember).toHaveBeenCalledWith(
-        groupId,
-        addMemberDto,
-        requesterId,
-      );
+      expect(service.addMember).toHaveBeenCalledWith(groupId, addMemberDto, requesterId);
       expect(result).toBeDefined();
     });
   });
