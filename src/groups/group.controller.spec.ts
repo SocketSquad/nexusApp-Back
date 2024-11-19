@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { GroupController } from './groups.controller';
 import { GroupService } from './providers/groups.service';
-import { GroupPrivacy, GroupRole } from '../utils/types';
+import { GroupPrivacy, GroupRole } from '@/utils/types';
 import { CreateGroupDto } from './dtos/create-group.dto';
 import { UpdatedGroupDto } from './dtos/update-group.dto';
 import { AddMemberDto } from './dtos/add-member.dto';

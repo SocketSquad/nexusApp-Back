@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AttachmentsService } from './attachments.service';
 import { AttachmentsRepository } from '../repositories/attachments.repository';
 import { NotFoundException } from '@nestjs/common';
-import { AttachmentType } from '../../utils/types';
+import { AttachmentType } from '@/utils/types';
 import { Types } from 'mongoose';
 
 

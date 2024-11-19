@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AttachmentsController } from './attachments.controller';
 import { Types } from 'mongoose';
 import { AttachmentsService } from './providers/attachments.service';
-import { AttachmentType } from '../../src/utils/types';
+import { AttachmentType } from '@/utils/types';
 import { CreateAttachmentDto } from './dtos/create-attachments.dto';
 import { QueryAttachmentDto } from './dtos/query-attachments.dto';
 

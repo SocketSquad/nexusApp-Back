@@ -5,7 +5,7 @@ import { NotFoundException, ForbiddenException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { GroupService } from './groups.service';
 import { GroupRepository } from '../repositories/groups.repository';
-import { GroupPrivacy, GroupRole } from '../../utils/types';
+import { GroupPrivacy, GroupRole } from '@/utils/types';
 import { CreateGroupDto } from '../dtos/create-group.dto';
 
 describe('GroupService (Unit)', () => {

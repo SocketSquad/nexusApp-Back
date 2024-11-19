@@ -1,5 +1,5 @@
 import { IsString, IsEnum, IsOptional, MinLength, MaxLength } from 'class-validator';
-import { GroupPrivacy } from '../../utils/types';
+import { GroupPrivacy } from '@/utils/types';
 
 export class CreateGroupDto {
   @IsString()

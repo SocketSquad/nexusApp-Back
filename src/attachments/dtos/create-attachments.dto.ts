@@ -1,5 +1,5 @@
 import { IsEnum, IsMongoId, IsNumber, IsString, IsUrl } from 'class-validator';
-import { AttachmentType } from '../../utils/types';
+import { AttachmentType } from '@/utils/types';
 
 export class CreateAttachmentDto {
   @IsMongoId()
