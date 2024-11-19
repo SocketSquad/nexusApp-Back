@@ -8,7 +8,6 @@ import { Types } from 'mongoose';
 
 describe('FriendRequestService', () => {
   let service: FriendRequestService;
-  let repository: FriendRequestRepository;
 
   const mockRepository = {
     create: jest.fn(),
@@ -31,7 +30,6 @@ describe('FriendRequestService', () => {
     }).compile();
 
     service = module.get<FriendRequestService>(FriendRequestService);
-    repository = module.get<FriendRequestRepository>(FriendRequestRepository);
   });
 
   afterEach(() => {
