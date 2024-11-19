@@ -27,21 +27,13 @@ export class Friend extends Document {
     type: String,
     enum: Object.values(FriendStatus),
     default: FriendStatus.PENDING,
+    required: true,
     index: true,
   })
   status: FriendStatus;
 
-  @Prop({ type: Date, default: Date.now })
-  createdAt: Date;
-
-  @Prop({ type: Date, default: Date.now })
-  updatedAt: Date;
-
   @Prop({ type: Date })
   acceptedAt?: Date;
-
-  @Prop({ type: Date })
-  blockedAt?: Date;
 }
 
 export const FriendSchema = SchemaFactory.createForClass(Friend);

@@ -1,0 +1,59 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["Tests"]
+    types:
+      - completed
+    branches: [ "main" ]
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Dockerhub
+        run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+      - name: Build the Docker image
+        run: docker build -t echaf/nexus-app-back:latest .
+
+      - name: Push to Dockerhub
+        run: docker push echaf/nexus-app-back:latest
+
+      - name: Slack Notification on Successful Build
+        if: success()
+        run: |
+          message="*✅ Build Successful!* 🎉\\n"
+          message="${message}*Triggered by:* ${{ github.actor }}\\n"
+          message="${message}<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow Run>"
+
+          curl -X POST \
+            -H 'Content-type: application/json' \
+            -H 'Authorization: Bearer ${{ secrets.SLACK_TOKEN }}' \
+            --data "{\"channel\":\"nexus-app-back-build\",\"text\":\"$message\"}" \
+            https://slack.com/api/chat.postMessage
+
+      - name: Slack Notification on Build Failure
+        if: failure()
+        run: |
+          message="*❌ Build Failed!* ⚠️\\n"
+          message="${message}*Triggered by:* ${{ github.actor }}\\n"
+          message="${message}<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow Run>"
+
+          curl -X POST \
+            -H 'Content-type: application/json' \
+            -H 'Authorization: Bearer ${{ secrets.SLACK_TOKEN }}' \
+            --data "{\"channel\":\"nexus-app-back-build\",\"text\":\"$message\"}" \
+            https://slack.com/api/chat.postMessage
