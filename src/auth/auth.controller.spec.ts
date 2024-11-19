@@ -14,7 +14,7 @@ describe('AuthController', () => {
     id: '507f1f77bcf86cd799439011',
     email: 'test@example.com',
     username: 'testuser',
-    password: process.env.TEST_USER_PASSWORD,
+    password: 'password',
   } as const;
 
   const mockAuthService = {
@@ -68,9 +68,7 @@ describe('AuthController', () => {
     it('should throw UnauthorizedException when login fails', async () => {
       mockAuthService.login.mockRejectedValue(new UnauthorizedException());
 
-      await expect(controller.login(loginDto)).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
     });
   });
 
