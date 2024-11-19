@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { GroupPrivacy } from '../../utils/types';
+import { GroupPrivacy } from '@/utils/types';
 @Schema({ _id: false })
 class GroupMember {
   @Prop({
