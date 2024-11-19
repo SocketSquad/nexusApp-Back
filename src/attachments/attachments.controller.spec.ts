@@ -6,10 +6,6 @@ import { AttachmentType } from '@/utils/types';
 import { CreateAttachmentDto } from './dtos/create-attachments.dto';
 import { QueryAttachmentDto } from './dtos/query-attachments.dto';
 
-// Type declaration for custom matchers
-interface CustomJestMatchers<R> {
-  toBeValidMongoId(): R;
-}
 
 describe('AttachmentsController', () => {
   let controller: AttachmentsController;
