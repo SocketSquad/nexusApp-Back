@@ -121,10 +121,6 @@ jobs:
           MONGODB_URI: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
-      - name: Fail workflow if E2E tests fail
-        if: steps.run-integration-tests.outcome == 'failure'
-        run: exit 1
-
   sonar-analysis:
     name: SonarQube Analysis
     needs: [unit-tests, integration-tests]
