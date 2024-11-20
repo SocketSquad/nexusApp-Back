@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { DirectConversationsModule } from './direct-conversations/direct-conversations.module';
-import { GroupConversationsModule } from './group-conversations/group-conversations.module';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './groups/groups.module';
 import { DirectMessagesModule } from './direct-messages/direct-messages.module';
@@ -21,7 +20,6 @@ import { AppService } from './app.service';
     }),
     DatabaseModule,
     DirectConversationsModule,
-    GroupConversationsModule,
     UsersModule,
     GroupsModule,
     DirectMessagesModule,
