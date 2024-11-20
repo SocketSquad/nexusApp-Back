@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { FriendStatus } from '../../utils/types';
+import { FriendStatus } from '@/utils/types';
 
 export interface IFriend extends Document {
   senderId: string;

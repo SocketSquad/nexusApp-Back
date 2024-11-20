@@ -1,0 +1,48 @@
+### Create a new friend request
+POST http://localhost:3000/friend-requests
+Content-Type: application/json
+
+{
+    "senderId": "65372028031c8c9a26219799",
+    "receiverId": "65372034031c8c9a2621979e"
+   
+}
+
+### Get all friend requests received by a user
+GET http://localhost:3000/friend-requests/received/65372028031c8c9a26219799
+
+### Get all friend requests sent by a user
+GET http://localhost:3000/friend-requests/sent/65372028031c8c9a26219799
+
+### Get a specific friend request by ID
+GET http://localhost:3000/friend-requests/65372028031c8c9a26219799
+
+### Accept a friend request
+PATCH http://localhost:3000/friend-requests/65372028031c8c9a26219799/accept
+Content-Type: application/json
+
+{
+    "userId": "65372034031c8c9a2621979e"
+}
+
+### Reject a friend request
+PATCH http://localhost:3000/friend-requests/65372028031c8c9a26219799/reject
+Content-Type: application/json
+
+{
+    "userId": "65372034031c8c9a2621979e"
+}
+
+### Cancel/Delete a friend request
+DELETE http://localhost:3000/friend-requests/65372028031c8c9a26219799
+Content-Type: application/json
+
+{
+    "userId": "65372028031c8c9a26219799"
+}
+
+### Get pending friend requests count
+GET http://localhost:3000/friend-requests/pending/count/65372028031c8c9a26219799
+
+### Check if friend request exists between users
+GET http://localhost:3000/friend-requests/check?senderId=65372028031c8c9a26219799&receiverId=65372034031c8c9a2621979e

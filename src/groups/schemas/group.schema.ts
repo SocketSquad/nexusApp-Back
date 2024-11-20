@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
-import { GroupPrivacy } from '../../utils/types';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import { GroupPrivacy } from '@/utils/types';
+
 @Schema({ _id: false })
 class GroupMember {
   @Prop({
@@ -8,7 +9,7 @@ class GroupMember {
     ref: 'User',
     required: true,
   })
-  userId: MongooseSchema.Types.ObjectId;
+  userId: Types.ObjectId;
 
   @Prop({
     type: String,
@@ -20,6 +21,35 @@ class GroupMember {
 
   @Prop({ type: Date, default: Date.now })
   joinedAt: Date;
+
+  @Prop({ type: Date })
+  lastRead: Date;
+}
+
+@Schema({ _id: false })
+class LastMessage {
+  @Prop({ type: MongooseSchema.Types.ObjectId })
+  _id: Types.ObjectId;
+
+  @Prop({ required: true })
+  content: string;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  })
+  senderId: Types.ObjectId;
+
+  @Prop({ type: Date, default: Date.now })
+  sentAt: Date;
+
+  @Prop({
+    type: String,
+    enum: ['text', 'image', 'file'],
+    default: 'text',
+  })
+  type: string;
 }
 
 @Schema({
@@ -49,7 +79,7 @@ export class Group extends Document {
     required: true,
     index: true,
   })
-  owner: MongooseSchema.Types.ObjectId;
+  owner: Types.ObjectId;
 
   @Prop({
     type: [GroupMember],
@@ -67,6 +97,9 @@ export class Group extends Document {
 
   @Prop({ type: Date, default: Date.now })
   lastActivityAt: Date;
+
+  @Prop({ type: LastMessage })
+  lastMessage?: LastMessage;
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);

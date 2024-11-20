@@ -1,178 +1,293 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GroupMessagesService } from '../providers/group-messages.service';
+import { GroupMessagesService } from './group-messages.service';
 import { GroupMessagesRepository } from '../repositories/group-messages.repository';
+import { GroupService } from '@/groups/providers/groups.service';
+import { Types } from 'mongoose';
 import { CreateGroupMessageDto } from '../dtos/create-group-message.dto';
 import { UpdateGroupMessageDto } from '../dtos/update-group-message.dto';
-import { MessageType } from '../../utils/types';
-import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, ForbiddenException } from '@nestjs/common';
+import { MessageType } from '@/utils/types';
 
 describe('GroupMessagesService', () => {
   let service: GroupMessagesService;
-  let mockRepository: {
-    create: jest.Mock;
-    findByConversation: jest.Mock;
-    findById: jest.Mock;
-    update: jest.Mock;
-    delete: jest.Mock;
+  let repository: GroupMessagesRepository;
+  let groupService: GroupService;
+
+  const mockGroupMessagesRepository = {
+    create: jest.fn(),
+    findById: jest.fn(),
+    findByGroupId: jest.fn(),
+    update: jest.fn(),
+    softDelete: jest.fn(),
+    setHasAttachments: jest.fn(),
   };
 
-  beforeEach(async () => {
-    mockRepository = {
-      create: jest.fn(),
-      findByConversation: jest.fn(),
-      findById: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    };
+  const mockGroupService = {
+    checkMessageAccess: jest.fn(),
+    updateLastMessage: jest.fn(),
+  };
 
+  const mockUserId = new Types.ObjectId();
+  const mockGroupId = new Types.ObjectId();
+  const mockMessageId = new Types.ObjectId();
+
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GroupMessagesService,
         {
           provide: GroupMessagesRepository,
-          useValue: mockRepository,
+          useValue: mockGroupMessagesRepository,
+        },
+        {
+          provide: GroupService,
+          useValue: mockGroupService,
         },
       ],
     }).compile();
 
     service = module.get<GroupMessagesService>(GroupMessagesService);
+    repository = module.get<GroupMessagesRepository>(GroupMessagesRepository);
+    groupService = module.get<GroupService>(GroupService);
   });
 
-  // Create Method Tests
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('create', () => {
-    const validCreateDto: CreateGroupMessageDto = {
-      conversationId: '60d5ecb54b093a001f3e6f2a',
-      senderId: '60d5ecb54b093a001f3e6f2b',
-      content: 'Hello world',
+    const createMessageDto: CreateGroupMessageDto = {
+      content: 'Test message',
       type: MessageType.TEXT,
     };
 
-    it('should create a message successfully', async () => {
-      const mockMessage = { ...validCreateDto, _id: 'messageid' };
-      mockRepository.create.mockResolvedValue(mockMessage);
-
-      const result = await service.create(validCreateDto);
-      expect(result).toEqual(mockMessage);
-      expect(mockRepository.create).toHaveBeenCalledWith(expect.objectContaining(validCreateDto));
-    });
-
-    it('should extract mentions from content', async () => {
-      const dtoWithMentions: CreateGroupMessageDto = {
-        ...validCreateDto,
-        content: 'Hello @john and @jane',
+    it('should create a message and update group last message', async () => {
+      const createdMessage = {
+        _id: mockMessageId,
+        groupId: mockGroupId,
+        senderId: mockUserId,
+        ...createMessageDto,
+        createdAt: new Date(),
       };
 
-      mockRepository.create.mockResolvedValue(dtoWithMentions);
+      mockGroupService.checkMessageAccess.mockResolvedValue(true);
+      mockGroupMessagesRepository.create.mockResolvedValue(createdMessage);
+      mockGroupService.updateLastMessage.mockResolvedValue({});
 
-      const result = await service.create(dtoWithMentions);
-      expect(result.mentions).toEqual(['john', 'jane']);
+      const result = await service.create(
+        mockGroupId.toString(),
+        mockUserId,
+        createMessageDto
+      );
+
+      expect(groupService.checkMessageAccess).toHaveBeenCalledWith(
+        mockGroupId.toString(),
+        mockUserId
+      );
+      expect(repository.create).toHaveBeenCalledWith(
+        mockGroupId,
+        mockUserId,
+        createMessageDto
+      );
+      expect(groupService.updateLastMessage).toHaveBeenCalledWith(
+        mockGroupId.toString(),
+        mockMessageId,
+        createMessageDto.content,
+        mockUserId,
+        createMessageDto.type
+      );
+      expect(result).toEqual(createdMessage);
     });
 
-    it('should throw BadRequestException for empty text message', async () => {
-      const emptyTextDto: CreateGroupMessageDto = {
-        ...validCreateDto,
-        content: '   ',
-      };
+    it('should throw ForbiddenException if user has no access', async () => {
+      mockGroupService.checkMessageAccess.mockRejectedValue(
+        new ForbiddenException()
+      );
 
-      await expect(service.create(emptyTextDto)).rejects.toThrow(BadRequestException);
+      await expect(
+        service.create(mockGroupId.toString(), mockUserId, createMessageDto)
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
-  // Find By Conversation Tests
-  describe('findByConversation', () => {
-    it('should retrieve messages for a conversation', async () => {
-      const mockResult = {
-        messages: [{ _id: 'msg1' }, { _id: 'msg2' }],
-        total: 2,
-      };
-      mockRepository.findByConversation.mockResolvedValue(mockResult);
-
-      const result = await service.findByConversation('conversationId');
-      expect(result).toEqual(mockResult);
-    });
-  });
-
-  // Find By ID Tests
   describe('findById', () => {
-    it('should retrieve a message by ID', async () => {
-      const mockMessage = { _id: 'messageid', content: 'Test message' };
-      mockRepository.findById.mockResolvedValue(mockMessage);
-
-      const result = await service.findById('messageid');
-      expect(result).toEqual(mockMessage);
-    });
-
-    it('should throw NotFoundException for non-existent message', async () => {
-      mockRepository.findById.mockResolvedValue(null);
-
-      await expect(service.findById('invalidid')).rejects.toThrow(NotFoundException);
-    });
-  });
-
-  // Update Method Tests
-  describe('update', () => {
-    const mockMessage = {
-      _id: 'messageid',
-      senderId: { toString: () => 'user1' },
-      createdAt: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
-    };
-
-    const updateDto: UpdateGroupMessageDto = {
-      content: 'Updated message',
-    };
-
-    beforeEach(() => {
-      mockRepository.findById.mockResolvedValue(mockMessage);
-    });
-
-    it('should update a message successfully', async () => {
-      const updatedMessage = { ...mockMessage, ...updateDto };
-      mockRepository.update.mockResolvedValue(updatedMessage);
-
-      const result = await service.update('messageid', updateDto, 'user1');
-      expect(result).toEqual(updatedMessage);
-    });
-
-    it('should throw ForbiddenException for updating others message', async () => {
-      await expect(service.update('messageid', updateDto, 'differentuser')).rejects.toThrow(ForbiddenException);
-    });
-
-    it('should throw ForbiddenException for updating message older than 15 minutes', async () => {
-      const oldMessage = {
-        ...mockMessage,
-        createdAt: new Date(Date.now() - 20 * 60 * 1000), // 20 minutes ago
+    it('should return a message if it exists', async () => {
+      const message = {
+        _id: mockMessageId,
+        content: 'Test message',
       };
-      mockRepository.findById.mockResolvedValue(oldMessage);
 
-      await expect(service.update('messageid', updateDto, 'user1')).rejects.toThrow(ForbiddenException);
+      mockGroupMessagesRepository.findById.mockResolvedValue(message);
+
+      const result = await service.findById(mockMessageId.toString());
+
+      expect(repository.findById).toHaveBeenCalledWith(mockMessageId);
+      expect(result).toEqual(message);
+    });
+
+    it('should throw NotFoundException if message not found', async () => {
+      mockGroupMessagesRepository.findById.mockResolvedValue(null);
+
+      await expect(
+        service.findById(mockMessageId.toString())
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
-  // Delete Method Tests
+  describe('findByGroupId', () => {
+    it('should return messages for group', async () => {
+      const messages = [
+        { _id: mockMessageId, content: 'Test message' }
+      ];
+
+      mockGroupService.checkMessageAccess.mockResolvedValue(true);
+      mockGroupMessagesRepository.findByGroupId.mockResolvedValue(messages);
+
+      const result = await service.findByGroupId(
+        mockGroupId.toString(),
+        mockUserId
+      );
+
+      expect(groupService.checkMessageAccess).toHaveBeenCalledWith(
+        mockGroupId.toString(),
+        mockUserId
+      );
+      expect(repository.findByGroupId).toHaveBeenCalledWith(
+        mockGroupId,
+        undefined,
+        undefined
+      );
+      expect(result).toEqual(messages);
+    });
+
+    it('should handle pagination parameters', async () => {
+      const limit = 10;
+      const before = '2023-01-01';
+      const beforeDate = new Date(before);
+
+      mockGroupService.checkMessageAccess.mockResolvedValue(true);
+      mockGroupMessagesRepository.findByGroupId.mockResolvedValue([]);
+
+      await service.findByGroupId(
+        mockGroupId.toString(),
+        mockUserId,
+        limit,
+        before
+      );
+
+      expect(repository.findByGroupId).toHaveBeenCalledWith(
+        mockGroupId,
+        limit,
+        beforeDate
+      );
+    });
+  });
+
+  describe('update', () => {
+    const updateMessageDto: UpdateGroupMessageDto = {
+      content: 'Updated message'
+    };
+
+    const mockMessage = {
+      _id: mockMessageId,
+      senderId: { _id: mockUserId },
+      content: 'Original message',
+      createdAt: new Date(),
+    };
+
+    it('should update message if user is sender and within time limit', async () => {
+      mockMessage.createdAt = new Date(); // Recent message
+      mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
+      mockGroupMessagesRepository.update.mockResolvedValue({
+        ...mockMessage,
+        ...updateMessageDto
+      });
+
+      const result = await service.update(
+        mockMessageId.toString(),
+        mockUserId,
+        updateMessageDto
+      );
+
+      expect(repository.update).toHaveBeenCalledWith(
+        mockMessageId,
+        updateMessageDto
+      );
+      expect(result.content).toBe(updateMessageDto.content);
+    });
+
+    it('should throw ForbiddenException if user is not sender', async () => {
+      const differentUserId = new Types.ObjectId();
+      mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
+
+      await expect(
+        service.update(mockMessageId.toString(), differentUserId, updateMessageDto)
+      ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw ForbiddenException if message is too old', async () => {
+      mockMessage.createdAt = new Date(Date.now() - 16 * 60 * 1000); // 16 minutes old
+      mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
+
+      await expect(
+        service.update(mockMessageId.toString(), mockUserId, updateMessageDto)
+      ).rejects.toThrow(ForbiddenException);
+    });
+  });
+
   describe('delete', () => {
     const mockMessage = {
-      _id: 'messageid',
-      senderId: { toString: () => 'user1' },
+      _id: mockMessageId,
+      senderId: { _id: mockUserId },
+      content: 'Test message',
     };
 
-    beforeEach(() => {
-      mockRepository.findById.mockResolvedValue(mockMessage);
+    it('should soft delete message if user is sender', async () => {
+      mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
+      mockGroupMessagesRepository.softDelete.mockResolvedValue({
+        ...mockMessage,
+        deletedAt: new Date()
+      });
+
+      const result = await service.delete(
+        mockMessageId.toString(),
+        mockUserId
+      );
+
+      expect(repository.softDelete).toHaveBeenCalledWith(mockMessageId);
+      expect(result.deletedAt).toBeDefined();
     });
 
-    it('should delete a message successfully', async () => {
-      mockRepository.delete.mockResolvedValue(true);
+    it('should throw ForbiddenException if user is not sender', async () => {
+      const differentUserId = new Types.ObjectId();
+      mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
 
-      await expect(service.delete('messageid', 'user1')).resolves.not.toThrow();
+      await expect(
+        service.delete(mockMessageId.toString(), differentUserId)
+      ).rejects.toThrow(ForbiddenException);
     });
+  });
 
-    it('should throw ForbiddenException for deleting others message', async () => {
-      await expect(service.delete('messageid', 'differentuser')).rejects.toThrow(ForbiddenException);
-    });
+  describe('setHasAttachments', () => {
+    it('should update message attachments status', async () => {
+      const hasAttachments = true;
+      const updatedMessage = {
+        _id: mockMessageId,
+        hasAttachments
+      };
 
-    it('should throw NotFoundException if delete fails', async () => {
-      mockRepository.delete.mockResolvedValue(false);
+      mockGroupMessagesRepository.setHasAttachments.mockResolvedValue(updatedMessage);
 
-      await expect(service.delete('messageid', 'user1')).rejects.toThrow(NotFoundException);
+      const result = await service.setHasAttachments(
+        mockMessageId.toString(),
+        hasAttachments
+      );
+
+      expect(repository.setHasAttachments).toHaveBeenCalledWith(
+        mockMessageId,
+        hasAttachments
+      );
+      expect(result.hasAttachments).toBe(hasAttachments);
     });
   });
 });
