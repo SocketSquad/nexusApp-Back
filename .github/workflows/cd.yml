@@ -34,7 +34,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: log env vars
+      - name: Log Environment Variables
         run: |
           echo "DATABASE_URL: $DATABASE_URL"
           echo "PORT: $PORT"
@@ -43,9 +43,12 @@ jobs:
           echo "AWS_REGION: $AWS_REGION"
           echo "AWS_CLOUDFRONT_URL: $AWS_CLOUDFRONT_URL"
           echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
-          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS
+          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
 
-          
+      - name: Log Docker Container Output
+        run: |
+          echo "Fetching Docker container logs..."
+          sudo docker logs nexus-app-back-container || true
           
       - name: Slack Notification on Deployment Success
         if: success()
