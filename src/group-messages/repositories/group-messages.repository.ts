@@ -10,46 +10,87 @@ import { IGroupMessagesRepository } from '../interfaces/group-messages.repositor
 export class GroupMessagesRepository implements IGroupMessagesRepository {
   constructor(
     @InjectModel(GroupMessage.name)
-    private readonly groupMessageModel: Model<GroupMessage>,
+    private readonly messageModel: Model<GroupMessage>,
   ) {}
 
-  async create(createMessageDto: CreateGroupMessageDto): Promise<GroupMessage> {
-    const message = new this.groupMessageModel({
+  async create(
+    groupId: Types.ObjectId,
+    senderId: Types.ObjectId,
+    createMessageDto: CreateGroupMessageDto,
+  ): Promise<GroupMessage> {
+    const message = new this.messageModel({
+      groupId,
+      senderId,
       ...createMessageDto,
-      conversationId: new Types.ObjectId(createMessageDto.conversationId),
-      senderId: new Types.ObjectId(createMessageDto.senderId),
-      attachments: createMessageDto.attachments?.map((id) => new Types.ObjectId(id)),
     });
     return message.save();
   }
 
-  async findByConversation(conversationId: string, page: number, limit: number): Promise<{ messages: GroupMessage[]; total: number }> {
-    const skip = (page - 1) * limit;
-    const query = { conversationId: new Types.ObjectId(conversationId) };
-
-    const [messages, total] = await Promise.all([
-      this.groupMessageModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('senderId', 'username avatar').populate('attachments').exec(),
-      this.groupMessageModel.countDocuments(query),
-    ]);
-
-    return { messages, total };
+  async findById(id: Types.ObjectId): Promise<GroupMessage> {
+    return this.messageModel
+      .findById(id)
+      .populate('senderId', 'username email')
+      .exec();
   }
 
-  async findById(id: string): Promise<GroupMessage | null> {
-    return this.groupMessageModel.findById(id).populate('senderId', 'username avatar').populate('attachments').exec();
-  }
-
-  async update(id: string, updateMessageDto: UpdateGroupMessageDto): Promise<GroupMessage | null> {
-    const updateData = {
-      ...updateMessageDto,
-      attachments: updateMessageDto.attachments?.map((id) => new Types.ObjectId(id)),
+  async findByGroupId(
+    groupId: Types.ObjectId,
+    limit: number = 50,
+    before?: Date,
+  ): Promise<GroupMessage[]> {
+    const query = { 
+      groupId,
+      deletedAt: { $exists: false }
     };
+    
+    if (before) {
+      query['createdAt'] = { $lt: before };
+    }
 
-    return this.groupMessageModel.findByIdAndUpdate(id, updateData, { new: true }).populate('senderId', 'username avatar').populate('attachments').exec();
+    return this.messageModel
+      .find(query)
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('senderId', 'username email')
+      .exec();
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await this.groupMessageModel.findByIdAndDelete(id).exec();
-    return !!result;
+  async update(
+    id: Types.ObjectId,
+    updateMessageDto: UpdateGroupMessageDto,
+  ): Promise<GroupMessage> {
+    return this.messageModel
+      .findByIdAndUpdate(
+        id,
+        { 
+          ...updateMessageDto,
+          isEdited: true 
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async softDelete(id: Types.ObjectId): Promise<GroupMessage> {
+    return this.messageModel
+      .findByIdAndUpdate(
+        id,
+        { deletedAt: new Date() },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async setHasAttachments(
+    id: Types.ObjectId,
+    hasAttachments: boolean
+  ): Promise<GroupMessage> {
+    return this.messageModel
+      .findByIdAndUpdate(
+        id,
+        { hasAttachments },
+        { new: true },
+      )
+      .exec();
   }
 }
