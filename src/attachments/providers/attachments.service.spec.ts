@@ -5,7 +5,6 @@ import { NotFoundException } from '@nestjs/common';
 import { AttachmentType } from '@/utils/types';
 import { Types } from 'mongoose';
 
-
 describe('AttachmentsService', () => {
   let service: AttachmentsService;
   let repository: AttachmentsRepository;
@@ -82,9 +81,7 @@ describe('AttachmentsService', () => {
     it('should throw NotFoundException when attachment not found', async () => {
       mockAttachmentsRepository.findById.mockResolvedValue(null);
 
-      await expect(service.findById('nonexistent-id')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findById('nonexistent-id')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -95,9 +92,7 @@ describe('AttachmentsService', () => {
 
       const result = await service.findByMessageId(mockAttachment.messageId.toString());
 
-      expect(repository.findByMessageId).toHaveBeenCalledWith(
-        mockAttachment.messageId.toString(),
-      );
+      expect(repository.findByMessageId).toHaveBeenCalledWith(mockAttachment.messageId.toString());
       expect(result).toEqual(attachments);
     });
   });
@@ -107,10 +102,7 @@ describe('AttachmentsService', () => {
       mockAttachmentsRepository.findById.mockResolvedValue(mockAttachment);
       mockAttachmentsRepository.delete.mockResolvedValue(mockAttachment);
 
-      const result = await service.delete(
-        mockAttachment._id.toString(),
-        mockAttachment.uploaderId.toString(),
-      );
+      const result = await service.delete(mockAttachment._id.toString(), mockAttachment.uploaderId.toString());
 
       expect(repository.delete).toHaveBeenCalledWith(mockAttachment._id.toString());
       expect(result).toEqual(mockAttachment);
@@ -119,12 +111,7 @@ describe('AttachmentsService', () => {
     it('should throw error when user is not the uploader', async () => {
       mockAttachmentsRepository.findById.mockResolvedValue(mockAttachment);
 
-      await expect(
-        service.delete(
-          mockAttachment._id.toString(),
-          new Types.ObjectId().toString(),
-        ),
-      ).rejects.toThrow('Unauthorized to delete this attachment');
+      await expect(service.delete(mockAttachment._id.toString(), new Types.ObjectId().toString())).rejects.toThrow('Unauthorized to delete this attachment');
     });
   });
 });
