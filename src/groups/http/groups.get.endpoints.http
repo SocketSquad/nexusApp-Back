@@ -1,0 +1,4 @@
+GET http://localhost:3000/groups
+Authorization: Bearer {{token}}
+GET http://localhost:3000/groups/673d0206717bd4b72ad3c095
+Authorization: Bearer {{token}}

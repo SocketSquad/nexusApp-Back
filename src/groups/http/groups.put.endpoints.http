@@ -1,0 +1,8 @@
+PUT http://localhost:3000/groups/673d234163d1c8cbd3305e5e
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Name group updated",
+  "description": "This description has been updated" 
+}
