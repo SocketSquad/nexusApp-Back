@@ -4,7 +4,6 @@ on:
     branches: 
       - main
 
-
 env:
   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
 
@@ -34,6 +33,19 @@ jobs:
           AWS_CLOUDFRONT_URL: ${{ secrets.AWS_CLOUDFRONT_URL }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: log env vars
+        run: |
+          echo "DATABASE_URL: $DATABASE_URL"
+          echo "PORT: $PORT"
+          echo "JWT_SECRET: $JWT_SECRET"
+          echo "AWS_PUBLIC_BUCKET_NAME: $AWS_PUBLIC_BUCKET_NAME"
+          echo "AWS_REGION: $AWS_REGION"
+          echo "AWS_CLOUDFRONT_URL: $AWS_CLOUDFRONT_URL"
+          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS
+
+          
           
       - name: Slack Notification on Deployment Success
         if: success()
