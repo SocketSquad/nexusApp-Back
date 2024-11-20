@@ -1,1 +1,8 @@
 POST http://localhost:3000/friends
+Content-Type: application/json
+{
+  "senderId": "67372028031c8c9a26219799",
+  "receiverId": "67372034031c8c9a2621979e",
+  "status":"PENDING"
+}
+

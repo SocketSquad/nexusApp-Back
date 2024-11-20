@@ -7,8 +7,8 @@ import { AttachmentsService } from './providers/attachments.service';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Attachment.name, schema: AttachmentSchema }])],
-  controllers :[AttachmentsController],
-  providers: [AttachmentsRepository,AttachmentsService],
+  controllers: [AttachmentsController],
+  providers: [AttachmentsRepository, AttachmentsService],
   exports: [AttachmentsService],
 })
 export class AttachmentsModule {}

@@ -1,1 +1,9 @@
 POST http://localhost:3000/groups
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Yak group",
+  "description": "This a Yak group"
+  
+}

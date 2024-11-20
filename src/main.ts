@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { config } from 'aws-sdk';
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, { logger: ['log', 'debug', 'error', 'warn'] });
 
     app.enableCors({
       origin: ['http://localhost:3000'],
@@ -17,6 +18,15 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
       }),
     );
+
+    // set the aws sdk used to upload files and images to aws s3 bucket
+    config.update({
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+      region: process.env.AWS_REGION,
+    });
 
     const port = process.env.PORT || 3001;
     await app.listen(port);
