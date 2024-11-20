@@ -1,35 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Types } from 'mongoose';
 import { GroupController } from './groups.controller';
 import { GroupService } from './providers/groups.service';
-import { GroupPrivacy, GroupRole } from '@/utils/types';
+import { Types } from 'mongoose';
 import { CreateGroupDto } from './dtos/create-group.dto';
 import { UpdatedGroupDto } from './dtos/update-group.dto';
 import { AddMemberDto } from './dtos/add-member.dto';
+import { GroupPrivacy, GroupRole } from '@/utils/types';
 
-describe('GroupController (Integration)', () => {
+describe('GroupController', () => {
   let controller: GroupController;
   let service: GroupService;
 
-  const mockGroup = {
-    _id: new Types.ObjectId(),
-    name: 'Test Group',
-    description: 'Test Description',
-    privacy: GroupPrivacy.PUBLIC,
-    owner: new Types.ObjectId(),
-    members: [],
-    lastActivityAt: new Date(),
+  const mockGroupService = {
+    create: jest.fn(),
+    findAll: jest.fn(),
+    findById: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    addMember: jest.fn(),
+    removeMember: jest.fn(),
+    updateMemberRole: jest.fn(),
+    getUnreadCount: jest.fn(),
+    updateMemberLastRead: jest.fn(),
   };
 
-  const mockGroupService = {
-    create: jest.fn().mockResolvedValue(mockGroup),
-    findAll: jest.fn().mockResolvedValue([mockGroup]),
-    findById: jest.fn().mockResolvedValue(mockGroup),
-    update: jest.fn().mockResolvedValue(mockGroup),
-    delete: jest.fn().mockResolvedValue(mockGroup),
-    addMember: jest.fn().mockResolvedValue(mockGroup),
-    removeMember: jest.fn().mockResolvedValue(mockGroup),
-    updateMemberRole: jest.fn().mockResolvedValue(mockGroup),
+  const mockRequest = {
+    user: {
+      userId: '507f1f77bcf86cd799439011'
+    }
   };
 
   beforeEach(async () => {
@@ -47,141 +45,184 @@ describe('GroupController (Integration)', () => {
     service = module.get<GroupService>(GroupService);
   });
 
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
   describe('create', () => {
     it('should create a group', async () => {
       const createGroupDto: CreateGroupDto = {
         name: 'Test Group',
         description: 'Test Description',
-        privacy: GroupPrivacy.PUBLIC,
+        privacy: GroupPrivacy.PUBLIC
       };
-      const req = { user: { userId: new Types.ObjectId().toString() } };
 
-      const result = await controller.create(createGroupDto, req);
+      const expectedResult = { id: 'groupId', ...createGroupDto };
+      mockGroupService.create.mockResolvedValue(expectedResult);
+
+      const result = await controller.create(createGroupDto, mockRequest);
 
       expect(service.create).toHaveBeenCalledWith(
-        createGroupDto, 
-        expect.any(Types.ObjectId)
+        createGroupDto,
+        new Types.ObjectId(mockRequest.user.userId)
       );
-      expect(result).toBeDefined();
-      expect(result.name).toBe(mockGroup.name);
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('findAll', () => {
     it('should return all groups', async () => {
-      const result = await controller.findAll(GroupPrivacy.PUBLIC);
+      const expectedGroups = [{ id: '1', name: 'Group 1' }];
+      mockGroupService.findAll.mockResolvedValue(expectedGroups);
 
-      expect(service.findAll).toHaveBeenCalledWith(GroupPrivacy.PUBLIC);
-      expect(result).toBeInstanceOf(Array);
-      expect(result[0].name).toBe(mockGroup.name);
+      const result = await controller.findAll();
+
+      expect(service.findAll).toHaveBeenCalled();
+      expect(result).toEqual(expectedGroups);
+    });
+
+    it('should return filtered groups by privacy', async () => {
+      const privacy = GroupPrivacy.PUBLIC;
+      const expectedGroups = [{ id: '1', name: 'Public Group' }];
+      mockGroupService.findAll.mockResolvedValue(expectedGroups);
+
+      const result = await controller.findAll(privacy);
+
+      expect(service.findAll).toHaveBeenCalledWith(privacy);
+      expect(result).toEqual(expectedGroups);
     });
   });
 
   describe('findOne', () => {
     it('should return a single group', async () => {
-      const groupId = mockGroup._id.toString();
+      const groupId = '507f1f77bcf86cd799439011';
+      const expectedGroup = { id: groupId, name: 'Test Group' };
+      mockGroupService.findById.mockResolvedValue(expectedGroup);
 
       const result = await controller.findOne(groupId);
 
       expect(service.findById).toHaveBeenCalledWith(groupId);
-      expect(result).toBeDefined();
-      expect(result.name).toBe(mockGroup.name);
+      expect(result).toEqual(expectedGroup);
     });
   });
 
   describe('update', () => {
     it('should update a group', async () => {
-      const groupId = mockGroup._id.toString();
+      const groupId = '507f1f77bcf86cd799439011';
       const updateGroupDto: UpdatedGroupDto = {
-        name: 'Updated Group Name',
+        name: 'Updated Group',
+        description: 'Updated Description'
       };
-      const req = { user: { userId: mockGroup.owner.toString() } };
+      const expectedResult = { id: groupId, ...updateGroupDto };
+      mockGroupService.update.mockResolvedValue(expectedResult);
 
-      const result = await controller.update(groupId, updateGroupDto, req);
+      const result = await controller.update(groupId, updateGroupDto, mockRequest);
 
       expect(service.update).toHaveBeenCalledWith(
         groupId,
         updateGroupDto,
-        expect.any(Types.ObjectId)
+        new Types.ObjectId(mockRequest.user.userId)
       );
-      expect(result).toBeDefined();
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('remove', () => {
-    it('should remove a group', async () => {
-      const groupId = mockGroup._id.toString();
-      const req = { user: { userId: mockGroup.owner.toString() } };
+    it('should delete a group', async () => {
+      const groupId = '507f1f77bcf86cd799439011';
+      const expectedResult = { deleted: true };
+      mockGroupService.delete.mockResolvedValue(expectedResult);
 
-      const result = await controller.remove(groupId, req);
+      const result = await controller.remove(groupId, mockRequest);
 
       expect(service.delete).toHaveBeenCalledWith(
         groupId,
-        expect.any(Types.ObjectId)
+        new Types.ObjectId(mockRequest.user.userId)
       );
-      expect(result).toBeDefined();
+      expect(result).toEqual(expectedResult);
     });
   });
 
-  describe('addMember', () => {
-    it('should add a member to the group', async () => {
-      const groupId = mockGroup._id.toString();
-      const newMemberId = new Types.ObjectId();
-      const addMemberDto: AddMemberDto = {
-        userId: newMemberId,
-        role: GroupRole.MEMBER,
-      };
-      const req = { user: { userId: mockGroup.owner.toString() } };
+  describe('member management', () => {
+    const groupId = '507f1f77bcf86cd799439011';
+    const memberId = '507f1f77bcf86cd799439012';
 
-      const result = await controller.addMember(groupId, addMemberDto, req);
+    it('should add a member to group', async () => {
+      const addMemberDto: AddMemberDto = {
+        userId: new Types.ObjectId(memberId),
+        role: GroupRole.MEMBER
+      };
+      const expectedResult = { success: true };
+      mockGroupService.addMember.mockResolvedValue(expectedResult);
+
+      const result = await controller.addMember(groupId, addMemberDto, mockRequest);
 
       expect(service.addMember).toHaveBeenCalledWith(
         groupId,
         addMemberDto,
-        expect.any(Types.ObjectId)
+        new Types.ObjectId(mockRequest.user.userId)
       );
-      expect(result).toBeDefined();
+      expect(result).toEqual(expectedResult);
     });
-  });
 
-  describe('removeMember', () => {
-    it('should remove a member from the group', async () => {
-      const groupId = mockGroup._id.toString();
-      const memberId = new Types.ObjectId().toString();
-      const req = { user: { userId: mockGroup.owner.toString() } };
+    it('should remove a member from group', async () => {
+      const expectedResult = { success: true };
+      mockGroupService.removeMember.mockResolvedValue(expectedResult);
 
-      const result = await controller.removeMember(groupId, memberId, req);
+      const result = await controller.removeMember(groupId, memberId, mockRequest);
 
       expect(service.removeMember).toHaveBeenCalledWith(
         groupId,
         memberId,
-        expect.any(Types.ObjectId)
+        new Types.ObjectId(mockRequest.user.userId)
       );
-      expect(result).toBeDefined();
+      expect(result).toEqual(expectedResult);
     });
-  });
 
-  describe('updateMemberRole', () => {
-    it('should update a member role', async () => {
-      const groupId = mockGroup._id.toString();
-      const memberId = new Types.ObjectId().toString();
+    it('should update member role', async () => {
       const role = GroupRole.ADMIN;
-      const req = { user: { userId: mockGroup.owner.toString() } };
+      const expectedResult = { success: true };
+      mockGroupService.updateMemberRole.mockResolvedValue(expectedResult);
 
-      const result = await controller.updateMemberRole(
-        groupId,
-        memberId,
-        role,
-        req
-      );
+      const result = await controller.updateMemberRole(groupId, memberId, role, mockRequest);
 
       expect(service.updateMemberRole).toHaveBeenCalledWith(
         groupId,
         memberId,
         role,
-        expect.any(Types.ObjectId)
+        new Types.ObjectId(mockRequest.user.userId)
       );
-      expect(result).toBeDefined();
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('message management', () => {
+    const groupId = '507f1f77bcf86cd799439011';
+
+    it('should get unread messages count', async () => {
+      const expectedResult = { count: 5 };
+      mockGroupService.getUnreadCount.mockResolvedValue(expectedResult);
+
+      const result = await controller.getUnreadCount(groupId, mockRequest);
+
+      expect(service.getUnreadCount).toHaveBeenCalledWith(
+        groupId,
+        new Types.ObjectId(mockRequest.user.userId)
+      );
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should mark messages as read', async () => {
+      const expectedResult = { success: true };
+      mockGroupService.updateMemberLastRead.mockResolvedValue(expectedResult);
+
+      const result = await controller.markAsRead(groupId, mockRequest);
+
+      expect(service.updateMemberLastRead).toHaveBeenCalledWith(
+        groupId,
+        new Types.ObjectId(mockRequest.user.userId)
+      );
+      expect(result).toEqual(expectedResult);
     });
   });
 });

@@ -33,6 +33,7 @@ export class GroupController {
     return this.groupService.findById(id);
   }
 
+  // Update group name or description 
   @Put(':id')
   @ApiOperation({ summary: 'Update group' })
   async update(@Param('id') id: string, @Body() updateGroupDto: UpdatedGroupDto, @Req() req: any) {
@@ -72,6 +73,7 @@ export class GroupController {
     return this.groupService.removeMember(id, memberId, requesterObjectId);
   }
 
+  //Update member role
   @Put(':id/members/:memberId/role')
   @ApiOperation({ summary: 'Update member role' })
   async updateMemberRole(
@@ -83,5 +85,19 @@ export class GroupController {
     const requesterId = req.user.userId;
     const requesterObjectId = new Types.ObjectId(String(requesterId));
     return this.groupService.updateMemberRole(id, memberId, role, requesterObjectId);
+  }
+
+  @Get(':id/unread')
+  @ApiOperation({ summary: 'Get unread messages count' })
+  async getUnreadCount(@Param('id') id: string, @Req() req: any) {
+    const userId = new Types.ObjectId(String(req.user.userId));
+    return this.groupService.getUnreadCount(id, userId);
+  }
+
+  @Post(':id/read')
+  @ApiOperation({ summary: 'Mark messages as read' })
+  async markAsRead(@Param('id') id: string, @Req() req: any) {
+    const userId = new Types.ObjectId(String(req.user.userId));
+    return this.groupService.updateMemberLastRead(id, userId);
   }
 }

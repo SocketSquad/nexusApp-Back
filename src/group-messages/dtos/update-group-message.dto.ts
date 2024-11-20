@@ -1,19 +1,7 @@
-import { IsString, IsOptional, IsArray } from 'class-validator';
-import { PartialType } from '@nestjs/swagger';
-import { CreateGroupMessageDto } from './create-group-message.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateGroupMessageDto extends PartialType(CreateGroupMessageDto) {
-  @IsOptional()
+export class UpdateGroupMessageDto {
+  @IsNotEmpty()
   @IsString()
-  content?: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  mentions?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  attachments?: string[];
+  content: string;
 }

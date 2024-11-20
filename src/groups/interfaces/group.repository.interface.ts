@@ -12,4 +12,12 @@ export interface IGroupRepository {
   addMember(groupId: Types.ObjectId, userId: Types.ObjectId, role: string): Promise<Group>;
   removeMember(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<Group>;
   updateMemberRole(groupId: Types.ObjectId, userId: Types.ObjectId, newRole: string): Promise<Group>;
+  updateLastMessage(
+    groupId: Types.ObjectId,
+    messageId: Types.ObjectId,
+    content: string,
+    senderId: Types.ObjectId,
+    type: string
+  ): Promise<Group>;
+  updateMemberLastRead(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<Group>;
 }

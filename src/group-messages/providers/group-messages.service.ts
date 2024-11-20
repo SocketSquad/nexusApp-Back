@@ -1,94 +1,119 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { GroupMessagesRepository } from '../repositories/group-messages.repository';
+import { GroupService } from '@/groups/providers/groups.service';
+import { GroupMessage } from '../schemas/group-message.schema';
 import { CreateGroupMessageDto } from '../dtos/create-group-message.dto';
 import { UpdateGroupMessageDto } from '../dtos/update-group-message.dto';
-import { GroupMessage } from '../schemas/group-message.schema';
-import { MessageType } from '@/utils/types';
 import { IGroupMessagesService } from '../interfaces/group-messages.service.interface';
 
 @Injectable()
 export class GroupMessagesService implements IGroupMessagesService {
-  constructor(private readonly groupMessagesRepository: GroupMessagesRepository) {}
+  constructor(
+    private readonly messagesRepository: GroupMessagesRepository,
+    private readonly groupService: GroupService,
+  ) {}
 
-  async create(createMessageDto: CreateGroupMessageDto): Promise<GroupMessage> {
-    // Validate message type and content
-    this.validateMessageContent(createMessageDto.type, createMessageDto.content);
+  async create(
+    groupId: string,
+    senderId: Types.ObjectId,
+    createMessageDto: CreateGroupMessageDto
+  ): Promise<GroupMessage> {
+    // Check if user has access to the group
+    await this.groupService.checkMessageAccess(groupId, senderId);
 
-    // Extract mentions
-    if (createMessageDto.content.includes('@')) {
-      createMessageDto.mentions = this.extractMentions(createMessageDto.content);
-    }
+    const groupObjectId = new Types.ObjectId(groupId);
+    const message = await this.messagesRepository.create(
+      groupObjectId,
+      senderId,
+      createMessageDto
+    );
 
-    return this.groupMessagesRepository.create(createMessageDto);
-  }
+    // Update group's last message
+    await this.groupService.updateLastMessage(
+      groupId,
+      message._id as Types.ObjectId,
+      message.content,
+      senderId,
+      message.type
+    );
 
-  async findByConversation(conversationId: string, page: number = 1, limit: number = 50): Promise<{ messages: GroupMessage[]; total: number }> {
-    return this.groupMessagesRepository.findByConversation(conversationId, page, limit);
-  }
-
-  async findById(id: string): Promise<GroupMessage> {
-    const message = await this.groupMessagesRepository.findById(id);
-    if (!message) {
-      throw new NotFoundException('Message not found');
-    }
     return message;
   }
 
-  async update(id: string, updateMessageDto: UpdateGroupMessageDto, userId: string): Promise<GroupMessage> {
-    const message = await this.findById(id);
-
-    if (message.senderId.toString() !== userId) {
-      throw new ForbiddenException('You can only edit your own messages');
-    }
-
-    // Check if the message is within the editable time frame (15 minutes)
-    const currentTime = new Date();
-    const messageCreationTime = new Date(message.createdAt);
-    const timeDifference = (currentTime.getTime() - messageCreationTime.getTime()) / (1000 * 60); // Convert ms to minutes
-
-    if (timeDifference > 15) {
-      throw new ForbiddenException('You can only edit messages within 15 minutes of creation');
-    }
-
-    // Update mentions if content is being updated
-    if (updateMessageDto.content) {
-      if (updateMessageDto.content.includes('@')) {
-        updateMessageDto.mentions = this.extractMentions(updateMessageDto.content);
-      } else {
-        updateMessageDto.mentions = [];
-      }
-    }
-
-    const updatedMessage = await this.groupMessagesRepository.update(id, updateMessageDto);
-    if (!updatedMessage) {
+  async findById(id: string): Promise<GroupMessage> {
+    const message = await this.messagesRepository.findById(
+      new Types.ObjectId(id)
+    );
+    
+    if (!message) {
       throw new NotFoundException('Message not found');
     }
-
-    return updatedMessage;
+    
+    return message;
   }
 
-  async delete(id: string, userId: string): Promise<void> {
+  async findByGroupId(
+    groupId: string,
+    userId: Types.ObjectId,
+    limit?: number,
+    before?: string
+  ): Promise<GroupMessage[]> {
+    // Check if user has access to the group
+    await this.groupService.checkMessageAccess(groupId, userId);
+
+    const beforeDate = before ? new Date(before) : undefined;
+    
+    return this.messagesRepository.findByGroupId(
+      new Types.ObjectId(groupId),
+      limit,
+      beforeDate
+    );
+  }
+
+  async update(
+    id: string,
+    userId: Types.ObjectId,
+    updateMessageDto: UpdateGroupMessageDto
+  ): Promise<GroupMessage> {
     const message = await this.findById(id);
 
-    if (message.senderId.toString() !== userId) {
-      throw new ForbiddenException('You can only delete your own messages');
+
+    // Check if user is the message sender
+    if (message.senderId._id.toString() !== userId.toString()) {
+      throw new ForbiddenException('Only the message sender can update the message');
     }
 
-    const deleted = await this.groupMessagesRepository.delete(id);
-    if (!deleted) {
-      throw new NotFoundException('Message not found');
+    // Only update in 15 minutes after creating message
+    const messageAge = Date.now() - message.createdAt.getTime();
+    const fifteenMinutes = 15 * 60 * 1000;
+    if (messageAge > fifteenMinutes) {
+      throw new ForbiddenException('Messages can only be edited within 15 minutes of sending');
     }
+
+    return this.messagesRepository.update(
+      new Types.ObjectId(id),
+      updateMessageDto
+    );
   }
 
-  private validateMessageContent(type: MessageType, content: string): void {
-    if (type === MessageType.TEXT && !content.trim()) {
-      throw new BadRequestException('Text message cannot be empty');
+  async delete(id: string, userId: Types.ObjectId): Promise<GroupMessage> {
+    const message = await this.findById(id);
+
+
+    if (!message) {
+      throw new NotFoundException(`Message with ID "${id}" not found`);
     }
+
+    // Check if user is the message sender
+    if (message.senderId._id.toString() !== userId.toString()) {
+      throw new ForbiddenException('Only the message sender can delete the message');
+    }
+    return this.messagesRepository.softDelete(new Types.ObjectId(id));
   }
 
-  private extractMentions(content: string): string[] {
-    const mentionRegex = /@(\w+)/g;
-    const matches = content.match(mentionRegex) || [];
-    return matches.map((mention) => mention.substring(1));
+  async setHasAttachments(id: string, hasAttachments: boolean): Promise<GroupMessage> {
+    const messageId = new Types.ObjectId(id);
+    return this.messagesRepository.setHasAttachments(messageId, hasAttachments);
   }
 }
