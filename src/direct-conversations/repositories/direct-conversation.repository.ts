@@ -17,11 +17,7 @@ export class DirectConversationRepository {
   }
 
   async findById(id: Types.ObjectId): Promise<DirectConversation> {
-    return this.directConversationModel
-      .findById(id)
-      .populate('participants.userId', 'username avatar')
-      .populate('lastMessage.senderId', 'username avatar')
-      .exec();
+    return this.directConversationModel.findById(id).populate('participants.userId', 'username avatar').populate('lastMessage.senderId', 'username avatar').exec();
   }
 
   async findByParticipant(userId: Types.ObjectId): Promise<DirectConversation[]> {
@@ -33,26 +29,15 @@ export class DirectConversationRepository {
       .exec();
   }
 
-  async updateLastMessage(
-    id: Types.ObjectId,
-    lastMessage: IUpdateDirectConversation['lastMessage'],
-  ): Promise<DirectConversation> {
+  async updateLastMessage(id: Types.ObjectId, lastMessage: IUpdateDirectConversation['lastMessage']): Promise<DirectConversation> {
     return this.directConversationModel
-      .findByIdAndUpdate(
-        id,
-        { $set: { lastMessage } },
-        { new: true },
-      )
+      .findByIdAndUpdate(id, { $set: { lastMessage } }, { new: true })
       .populate('participants.userId', 'username avatar')
       .populate('lastMessage.senderId', 'username avatar')
       .exec();
   }
 
-  async updateLastRead(
-    conversationId: Types.ObjectId,
-    userId: Types.ObjectId,
-    lastRead: Date,
-  ): Promise<DirectConversation> {
+  async updateLastRead(conversationId: Types.ObjectId, userId: Types.ObjectId, lastRead: Date): Promise<DirectConversation> {
     return this.directConversationModel
       .findOneAndUpdate(
         {

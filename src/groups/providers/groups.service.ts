@@ -45,13 +45,11 @@ export class GroupService implements IGroupService {
     return this.groupRepository.delete(new Types.ObjectId(String(id)));
   }
 
-  async   addMember(groupId: string, addMemberDto: AddMemberDto, requesterId: Types.ObjectId): Promise<Group> {
+  async addMember(groupId: string, addMemberDto: AddMemberDto, requesterId: Types.ObjectId): Promise<Group> {
     const group = await this.findById(groupId);
 
-    const requesterMember = group.members.find(
-      (m) => m.userId._id.toString() === requesterId.toString()
-    );
-    
+    const requesterMember = group.members.find((m) => m.userId._id.toString() === requesterId.toString());
+
     if (!requesterMember || (requesterMember.role !== 'admin' && group.owner._id.toString() !== requesterId.toString())) {
       throw new ForbiddenException('No permission to add members');
     }
@@ -60,20 +58,14 @@ export class GroupService implements IGroupService {
       throw new ForbiddenException('User is already a member of this group');
     }
 
-    return this.groupRepository.addMember(
-      new Types.ObjectId(String(groupId)),
-      addMemberDto.userId,
-      addMemberDto.role
-    );
+    return this.groupRepository.addMember(new Types.ObjectId(String(groupId)), addMemberDto.userId, addMemberDto.role);
   }
 
   async removeMember(groupId: string, memberId: string, requesterId: Types.ObjectId): Promise<Group> {
     const group = await this.findById(groupId);
 
-    const requesterMember = group.members.find(
-      (m) => m.userId._id.toString() === requesterId.toString()
-    );
-    
+    const requesterMember = group.members.find((m) => m.userId._id.toString() === requesterId.toString());
+
     if (!requesterMember || (requesterMember.role !== 'admin' && group.owner._id.toString() !== requesterId.toString())) {
       throw new ForbiddenException('No permission to remove members');
     }
@@ -84,16 +76,13 @@ export class GroupService implements IGroupService {
     }
 
     // Find the member to be removed
-    const memberToRemove = group.members.find(m => m.userId._id.toString() === memberIdObj.toString());
+    const memberToRemove = group.members.find((m) => m.userId._id.toString() === memberIdObj.toString());
 
     if (!memberToRemove) {
       throw new NotFoundException('Member not found');
     }
 
-    return this.groupRepository.removeMember(
-      new Types.ObjectId(String(groupId)),
-      memberIdObj
-    );
+    return this.groupRepository.removeMember(new Types.ObjectId(String(groupId)), memberIdObj);
   }
 
   async updateMemberRole(groupId: string, memberId: string, newRole: string, requesterId: Types.ObjectId): Promise<Group> {
@@ -109,67 +98,48 @@ export class GroupService implements IGroupService {
     }
 
     // Find the member to be removed
-    const memberToUpdate = group.members.find(m => m.userId._id.toString() === memberIdObj.toString());
+    const memberToUpdate = group.members.find((m) => m.userId._id.toString() === memberIdObj.toString());
 
     if (!memberToUpdate) {
       throw new NotFoundException('Member not found');
     }
 
-    return this.groupRepository.updateMemberRole(
-      new Types.ObjectId(String(groupId)),
-      memberIdObj,
-      newRole
-    );
+    return this.groupRepository.updateMemberRole(new Types.ObjectId(String(groupId)), memberIdObj, newRole);
   }
 
   async checkMessageAccess(groupId: string, userId: Types.ObjectId): Promise<boolean> {
     const group = await this.findById(groupId);
-    
+
     // Check if user is a member or owner
-    const isMember = group.members.some(m => m.userId._id.toString() === userId.toString());
+    const isMember = group.members.some((m) => m.userId._id.toString() === userId.toString());
     const isOwner = group.owner._id.toString() === userId.toString();
-    
+
     if (!isMember && !isOwner) {
       throw new ForbiddenException('User is not a member of this group');
     }
-    
+
     return true;
   }
 
-  async updateLastMessage(
-    groupId: string,
-    messageId: Types.ObjectId,
-    content: string,
-    senderId: Types.ObjectId,
-    type: string
-  ): Promise<Group> {
-    return this.groupRepository.updateLastMessage(
-      new Types.ObjectId(groupId),
-      messageId,
-      content,
-      senderId,
-      type
-    );
+  async updateLastMessage(groupId: string, messageId: Types.ObjectId, content: string, senderId: Types.ObjectId, type: string): Promise<Group> {
+    return this.groupRepository.updateLastMessage(new Types.ObjectId(groupId), messageId, content, senderId, type);
   }
 
   async updateMemberLastRead(groupId: string, userId: Types.ObjectId): Promise<Group> {
-    return this.groupRepository.updateMemberLastRead(
-      new Types.ObjectId(groupId),
-      userId
-    );
+    return this.groupRepository.updateMemberLastRead(new Types.ObjectId(groupId), userId);
   }
 
   async getUnreadCount(groupId: string, userId: Types.ObjectId): Promise<number> {
     const group = await this.findById(groupId);
-    const member = group.members.find(m => m.userId._id.toString() === userId.toString());
-    
+    const member = group.members.find((m) => m.userId._id.toString() === userId.toString());
+
     if (!member) {
       throw new ForbiddenException('User is not a member of this group');
     }
 
     // If no lastRead date, use joinedAt date
     const lastReadDate = member.lastRead || member.joinedAt;
-    
+
     // If no messages yet, return 0
     if (!group.lastMessage) {
       return 0;
@@ -177,5 +147,4 @@ export class GroupService implements IGroupService {
 
     return group.lastMessage.sentAt > lastReadDate ? 1 : 0;
   }
-
 }

@@ -17,9 +17,7 @@ export class UploadService implements UploadInterface {
     });
   }
 
-  async uploadFile(
-    file: Express.Multer.File,
-  ): Promise<{ url: string; key: string }> {
+  async uploadFile(file: Express.Multer.File): Promise<{ url: string; key: string }> {
     const fileExtension = file.originalname.split('.').pop();
     const uniqueFileName = `${uuidv4()}.${fileExtension}`;
 

@@ -80,17 +80,10 @@ describe('DirectMessageController', () => {
 
       mockService.findByConversation.mockResolvedValue(messages);
 
-      const result = await controller.getConversationMessages(
-        mockMessage.conversationId.toString(),
-        query,
-      );
+      const result = await controller.getConversationMessages(mockMessage.conversationId.toString(), query);
 
       expect(result).toEqual(messages);
-      expect(mockService.findByConversation).toHaveBeenCalledWith(
-        expect.any(Types.ObjectId),
-        50,
-        undefined,
-      );
+      expect(mockService.findByConversation).toHaveBeenCalledWith(expect.any(Types.ObjectId), 50, undefined);
     });
 
     it('should handle before date in query', async () => {
@@ -100,17 +93,10 @@ describe('DirectMessageController', () => {
 
       mockService.findByConversation.mockResolvedValue(messages);
 
-      const result = await controller.getConversationMessages(
-        mockMessage.conversationId.toString(),
-        query,
-      );
+      const result = await controller.getConversationMessages(mockMessage.conversationId.toString(), query);
 
       expect(result).toEqual(messages);
-      expect(mockService.findByConversation).toHaveBeenCalledWith(
-        expect.any(Types.ObjectId),
-        50,
-        beforeDate,
-      );
+      expect(mockService.findByConversation).toHaveBeenCalledWith(expect.any(Types.ObjectId), 50, beforeDate);
     });
   });
 
@@ -121,9 +107,7 @@ describe('DirectMessageController', () => {
       const result = await controller.getMessage(mockMessage._id.toString());
 
       expect(result).toEqual(mockMessage);
-      expect(mockService.findById).toHaveBeenCalledWith(
-        expect.any(Types.ObjectId),
-      );
+      expect(mockService.findById).toHaveBeenCalledWith(expect.any(Types.ObjectId));
     });
   });
 
@@ -138,19 +122,13 @@ describe('DirectMessageController', () => {
       const updatedMessage = { ...mockMessage, ...updateMessageDto };
       mockService.update.mockResolvedValue(updatedMessage);
 
-      const result = await controller.updateMessage(
-        mockMessage._id.toString(),
-        updateMessageDto,
-      );
+      const result = await controller.updateMessage(mockMessage._id.toString(), updateMessageDto);
 
       expect(result).toEqual(updatedMessage);
-      expect(mockService.update).toHaveBeenCalledWith(
-        expect.any(Types.ObjectId),
-        {
-          ...updateMessageDto,
-          attachments: [],
-        },
-      );
+      expect(mockService.update).toHaveBeenCalledWith(expect.any(Types.ObjectId), {
+        ...updateMessageDto,
+        attachments: [],
+      });
     });
   });
 
@@ -161,9 +139,7 @@ describe('DirectMessageController', () => {
       const result = await controller.deleteMessage(mockMessage._id.toString());
 
       expect(result).toEqual(mockMessage);
-      expect(mockService.delete).toHaveBeenCalledWith(
-        expect.any(Types.ObjectId),
-      );
+      expect(mockService.delete).toHaveBeenCalledWith(expect.any(Types.ObjectId));
     });
   });
 
@@ -172,14 +148,10 @@ describe('DirectMessageController', () => {
       const count = 5;
       mockService.getMessageCount.mockResolvedValue(count);
 
-      const result = await controller.getMessageCount(
-        mockMessage.conversationId.toString(),
-      );
+      const result = await controller.getMessageCount(mockMessage.conversationId.toString());
 
       expect(result).toBe(count);
-      expect(mockService.getMessageCount).toHaveBeenCalledWith(
-        expect.any(Types.ObjectId),
-      );
+      expect(mockService.getMessageCount).toHaveBeenCalledWith(expect.any(Types.ObjectId));
     });
   });
 
@@ -187,14 +159,10 @@ describe('DirectMessageController', () => {
     it('should get latest message from a conversation', async () => {
       mockService.getLatestMessage.mockResolvedValue(mockMessage);
 
-      const result = await controller.getLatestMessage(
-        mockMessage.conversationId.toString(),
-      );
+      const result = await controller.getLatestMessage(mockMessage.conversationId.toString());
 
       expect(result).toEqual(mockMessage);
-      expect(mockService.getLatestMessage).toHaveBeenCalledWith(
-        expect.any(Types.ObjectId),
-      );
+      expect(mockService.getLatestMessage).toHaveBeenCalledWith(expect.any(Types.ObjectId));
     });
   });
 });

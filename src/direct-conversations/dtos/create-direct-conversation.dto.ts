@@ -2,7 +2,6 @@ import { IsArray, IsNotEmpty, ValidateNested, ArrayMinSize, ArrayMaxSize } from 
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-
 export class ParticipantDto {
   @ApiProperty({
     description: 'The ID of the participant user',

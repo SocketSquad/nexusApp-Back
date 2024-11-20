@@ -17,41 +17,20 @@ export class DirectMessageRepository {
   }
 
   async findById(id: Types.ObjectId): Promise<DirectMessage> {
-    return this.directMessageModel
-      .findById(id)
-      .populate('senderId', 'username avatar')
-      .populate('attachments')
-      .exec();
+    return this.directMessageModel.findById(id).populate('senderId', 'username avatar').populate('attachments').exec();
   }
 
-  async findByConversation(
-    conversationId: Types.ObjectId,
-    limit: number = 50,
-    before?: Date,
-  ): Promise<DirectMessage[]> {
+  async findByConversation(conversationId: Types.ObjectId, limit: number = 50, before?: Date): Promise<DirectMessage[]> {
     const query: any = { conversationId };
     if (before) {
       query.createdAt = { $lt: before };
     }
 
-    return this.directMessageModel
-      .find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .populate('senderId', 'username avatar')
-      .populate('attachments')
-      .exec();
+    return this.directMessageModel.find(query).sort({ createdAt: -1 }).limit(limit).populate('senderId', 'username avatar').populate('attachments').exec();
   }
 
-  async update(
-    id: Types.ObjectId,
-    updateData: IUpdateDirectMessage,
-  ): Promise<DirectMessage> {
-    return this.directMessageModel
-      .findByIdAndUpdate(id, updateData, { new: true })
-      .populate('senderId', 'username avatar')
-      .populate('attachments')
-      .exec();
+  async update(id: Types.ObjectId, updateData: IUpdateDirectMessage): Promise<DirectMessage> {
+    return this.directMessageModel.findByIdAndUpdate(id, updateData, { new: true }).populate('senderId', 'username avatar').populate('attachments').exec();
   }
 
   async delete(id: Types.ObjectId): Promise<DirectMessage> {
@@ -63,11 +42,6 @@ export class DirectMessageRepository {
   }
 
   async findLatestMessage(conversationId: Types.ObjectId): Promise<DirectMessage> {
-    return this.directMessageModel
-      .findOne({ conversationId })
-      .sort({ createdAt: -1 })
-      .populate('senderId', 'username avatar')
-      .populate('attachments')
-      .exec();
+    return this.directMessageModel.findOne({ conversationId }).sort({ createdAt: -1 }).populate('senderId', 'username avatar').populate('attachments').exec();
   }
 }

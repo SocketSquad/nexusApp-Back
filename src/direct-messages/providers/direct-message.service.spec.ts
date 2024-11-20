@@ -78,9 +78,7 @@ describe('DirectMessageService', () => {
     it('should throw NotFoundException when message not found', async () => {
       mockRepository.findById.mockResolvedValue(null);
 
-      await expect(service.findById(mockMessage._id)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findById(mockMessage._id)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -89,17 +87,10 @@ describe('DirectMessageService', () => {
       const messages = [mockMessage];
       mockRepository.findByConversation.mockResolvedValue(messages);
 
-      const result = await service.findByConversation(
-        mockMessage.conversationId,
-        50,
-      );
+      const result = await service.findByConversation(mockMessage.conversationId, 50);
 
       expect(result).toEqual(messages);
-      expect(mockRepository.findByConversation).toHaveBeenCalledWith(
-        mockMessage.conversationId,
-        50,
-        undefined,
-      );
+      expect(mockRepository.findByConversation).toHaveBeenCalledWith(mockMessage.conversationId, 50, undefined);
     });
 
     it('should find messages before a specific date', async () => {
@@ -107,18 +98,10 @@ describe('DirectMessageService', () => {
       const beforeDate = new Date();
       mockRepository.findByConversation.mockResolvedValue(messages);
 
-      const result = await service.findByConversation(
-        mockMessage.conversationId,
-        50,
-        beforeDate,
-      );
+      const result = await service.findByConversation(mockMessage.conversationId, 50, beforeDate);
 
       expect(result).toEqual(messages);
-      expect(mockRepository.findByConversation).toHaveBeenCalledWith(
-        mockMessage.conversationId,
-        50,
-        beforeDate,
-      );
+      expect(mockRepository.findByConversation).toHaveBeenCalledWith(mockMessage.conversationId, 50, beforeDate);
     });
   });
 
@@ -133,18 +116,13 @@ describe('DirectMessageService', () => {
       const result = await service.update(mockMessage._id, updateData);
 
       expect(result).toEqual(updatedMessage);
-      expect(mockRepository.update).toHaveBeenCalledWith(
-        mockMessage._id,
-        updateData,
-      );
+      expect(mockRepository.update).toHaveBeenCalledWith(mockMessage._id, updateData);
     });
 
     it('should throw NotFoundException when message not found during update', async () => {
       mockRepository.update.mockResolvedValue(null);
 
-      await expect(
-        service.update(mockMessage._id, { content: 'Updated content' }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update(mockMessage._id, { content: 'Updated content' })).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -161,9 +139,7 @@ describe('DirectMessageService', () => {
     it('should throw NotFoundException when message not found during deletion', async () => {
       mockRepository.delete.mockResolvedValue(null);
 
-      await expect(service.delete(mockMessage._id)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.delete(mockMessage._id)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -175,9 +151,7 @@ describe('DirectMessageService', () => {
       const result = await service.getMessageCount(mockMessage.conversationId);
 
       expect(result).toBe(count);
-      expect(mockRepository.countMessages).toHaveBeenCalledWith(
-        mockMessage.conversationId,
-      );
+      expect(mockRepository.countMessages).toHaveBeenCalledWith(mockMessage.conversationId);
     });
   });
 
@@ -188,17 +162,13 @@ describe('DirectMessageService', () => {
       const result = await service.getLatestMessage(mockMessage.conversationId);
 
       expect(result).toEqual(mockMessage);
-      expect(mockRepository.findLatestMessage).toHaveBeenCalledWith(
-        mockMessage.conversationId,
-      );
+      expect(mockRepository.findLatestMessage).toHaveBeenCalledWith(mockMessage.conversationId);
     });
 
     it('should throw NotFoundException when no messages found', async () => {
       mockRepository.findLatestMessage.mockResolvedValue(null);
 
-      await expect(
-        service.getLatestMessage(mockMessage.conversationId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getLatestMessage(mockMessage.conversationId)).rejects.toThrow(NotFoundException);
     });
   });
 });

@@ -89,41 +89,39 @@ export class GroupRepository implements IGroupRepository {
       .exec();
   }
 
-  async updateLastMessage(
-    groupId: Types.ObjectId,
-    messageId: Types.ObjectId,
-    content: string,
-    senderId: Types.ObjectId,
-    type: string
-  ): Promise<Group> {
-    return this.groupModel.findByIdAndUpdate(
-      groupId,
-      {
-        lastMessage: {
-          _id: messageId,
-          content,
-          senderId,
-          sentAt: new Date(),
-          type,
+  async updateLastMessage(groupId: Types.ObjectId, messageId: Types.ObjectId, content: string, senderId: Types.ObjectId, type: string): Promise<Group> {
+    return this.groupModel
+      .findByIdAndUpdate(
+        groupId,
+        {
+          lastMessage: {
+            _id: messageId,
+            content,
+            senderId,
+            sentAt: new Date(),
+            type,
+          },
+          lastActivityAt: new Date(),
         },
-        lastActivityAt: new Date(),
-      },
-      { new: true }
-    ).exec();
+        { new: true },
+      )
+      .exec();
   }
 
   async updateMemberLastRead(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<Group> {
-    return this.groupModel.findOneAndUpdate(
-      {
-        _id: groupId,
-        'members.userId': userId,
-      },
-      {
-        $set: {
-          'members.$.lastRead': new Date(),
+    return this.groupModel
+      .findOneAndUpdate(
+        {
+          _id: groupId,
+          'members.userId': userId,
         },
-      },
-      { new: true }
-    ).exec();
+        {
+          $set: {
+            'members.$.lastRead': new Date(),
+          },
+        },
+        { new: true },
+      )
+      .exec();
   }
 }

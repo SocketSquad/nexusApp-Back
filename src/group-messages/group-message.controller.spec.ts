@@ -21,8 +21,8 @@ describe('GroupMessagesController', () => {
 
   const mockRequest = {
     user: {
-      userId: '507f1f77bcf86cd799439011'
-    }
+      userId: '507f1f77bcf86cd799439011',
+    },
   };
 
   const mockGroupId = '507f1f77bcf86cd799439022';
@@ -49,14 +49,12 @@ describe('GroupMessagesController', () => {
   describe('error handling', () => {
     it('should handle unauthorized message update', async () => {
       const updateMessageDto: UpdateGroupMessageDto = {
-        content: 'Updated message'
+        content: 'Updated message',
       };
 
       mockGroupMessagesService.update.mockRejectedValue(new Error('Unauthorized'));
 
-      await expect(
-        controller.update(mockMessageId, updateMessageDto, mockRequest)
-      ).rejects.toThrow();
+      await expect(controller.update(mockMessageId, updateMessageDto, mockRequest)).rejects.toThrow();
     });
   });
 
@@ -64,14 +62,12 @@ describe('GroupMessagesController', () => {
   describe('input validation', () => {
     it('should handle empty update message content', async () => {
       const updateMessageDto: UpdateGroupMessageDto = {
-        content: ''
+        content: '',
       };
 
       mockGroupMessagesService.update.mockRejectedValue(new Error('Invalid content'));
 
-      await expect(
-        controller.update(mockMessageId, updateMessageDto, mockRequest)
-      ).rejects.toThrow();
+      await expect(controller.update(mockMessageId, updateMessageDto, mockRequest)).rejects.toThrow();
     });
   });
 
@@ -80,61 +76,41 @@ describe('GroupMessagesController', () => {
     it('should create a message successfully', async () => {
       const createMessageDto: CreateGroupMessageDto = {
         content: 'Test message',
-        type: MessageType.TEXT
+        type: MessageType.TEXT,
       };
 
       const expectedResult = {
         _id: mockMessageId,
         ...createMessageDto,
         groupId: mockGroupId,
-        senderId: mockRequest.user.userId
+        senderId: mockRequest.user.userId,
       };
 
       mockGroupMessagesService.create.mockResolvedValue(expectedResult);
 
-      const result = await controller.create(
-        mockGroupId,
-        createMessageDto,
-        mockRequest
-      );
+      const result = await controller.create(mockGroupId, createMessageDto, mockRequest);
 
       expect(result).toEqual(expectedResult);
-      expect(service.create).toHaveBeenCalledWith(
-        mockGroupId,
-        new Types.ObjectId(mockRequest.user.userId),
-        createMessageDto
-      );
+      expect(service.create).toHaveBeenCalledWith(mockGroupId, new Types.ObjectId(mockRequest.user.userId), createMessageDto);
     });
 
     it('should find messages with pagination', async () => {
       const limit = 10;
       const before = '2023-01-01';
-      const expectedMessages = [
-        { _id: mockMessageId, content: 'Test message' }
-      ];
+      const expectedMessages = [{ _id: mockMessageId, content: 'Test message' }];
 
       mockGroupMessagesService.findByGroupId.mockResolvedValue(expectedMessages);
 
-      const result = await controller.findAll(
-        mockGroupId,
-        mockRequest,
-        limit,
-        before
-      );
+      const result = await controller.findAll(mockGroupId, mockRequest, limit, before);
 
       expect(result).toEqual(expectedMessages);
-      expect(service.findByGroupId).toHaveBeenCalledWith(
-        mockGroupId,
-        new Types.ObjectId(mockRequest.user.userId),
-        limit,
-        before
-      );
+      expect(service.findByGroupId).toHaveBeenCalledWith(mockGroupId, new Types.ObjectId(mockRequest.user.userId), limit, before);
     });
 
     it('should find a single message', async () => {
       const expectedMessage = {
         _id: mockMessageId,
-        content: 'Test message'
+        content: 'Test message',
       };
 
       mockGroupMessagesService.findById.mockResolvedValue(expectedMessage);
@@ -147,35 +123,27 @@ describe('GroupMessagesController', () => {
 
     it('should update a message', async () => {
       const updateMessageDto: UpdateGroupMessageDto = {
-        content: 'Updated message'
+        content: 'Updated message',
       };
 
       const expectedResult = {
         _id: mockMessageId,
         ...updateMessageDto,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockGroupMessagesService.update.mockResolvedValue(expectedResult);
 
-      const result = await controller.update(
-        mockMessageId,
-        updateMessageDto,
-        mockRequest
-      );
+      const result = await controller.update(mockMessageId, updateMessageDto, mockRequest);
 
       expect(result).toEqual(expectedResult);
-      expect(service.update).toHaveBeenCalledWith(
-        mockMessageId,
-        new Types.ObjectId(mockRequest.user.userId),
-        updateMessageDto
-      );
+      expect(service.update).toHaveBeenCalledWith(mockMessageId, new Types.ObjectId(mockRequest.user.userId), updateMessageDto);
     });
 
     it('should delete a message', async () => {
       const expectedResult = {
         _id: mockMessageId,
-        deletedAt: new Date()
+        deletedAt: new Date(),
       };
 
       mockGroupMessagesService.delete.mockResolvedValue(expectedResult);
@@ -183,10 +151,7 @@ describe('GroupMessagesController', () => {
       const result = await controller.remove(mockMessageId, mockRequest);
 
       expect(result).toEqual(expectedResult);
-      expect(service.delete).toHaveBeenCalledWith(
-        mockMessageId,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.delete).toHaveBeenCalledWith(mockMessageId, new Types.ObjectId(mockRequest.user.userId));
     });
   });
 });

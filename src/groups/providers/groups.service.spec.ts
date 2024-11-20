@@ -54,14 +54,14 @@ describe('GroupService', () => {
       const createGroupDto: CreateGroupDto = {
         name: 'Test Group',
         description: 'Test Description',
-        privacy: GroupPrivacy.PUBLIC
+        privacy: GroupPrivacy.PUBLIC,
       };
 
       const expectedGroup = {
         _id: mockGroupId,
         ...createGroupDto,
         owner: mockUserId,
-        members: []
+        members: [],
       };
 
       mockGroupRepository.create.mockResolvedValue(expectedGroup);
@@ -110,9 +110,7 @@ describe('GroupService', () => {
     it('should throw NotFoundException if group not found', async () => {
       mockGroupRepository.findById.mockResolvedValue(null);
 
-      await expect(service.findById(mockGroupId.toString()))
-        .rejects
-        .toThrow(NotFoundException);
+      await expect(service.findById(mockGroupId.toString())).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -120,13 +118,13 @@ describe('GroupService', () => {
     const mockGroup = {
       _id: mockGroupId,
       name: 'Test Group',
-      owner: { _id: mockUserId }
+      owner: { _id: mockUserId },
     };
 
     it('should update group if user is owner', async () => {
       const updateGroupDto: UpdatedGroupDto = {
         name: 'Updated Group',
-        description: 'Updated Description'
+        description: 'Updated Description',
       };
 
       mockGroupRepository.findById.mockResolvedValue(mockGroup);
@@ -142,9 +140,7 @@ describe('GroupService', () => {
       const nonOwnerUserId = new Types.ObjectId();
       mockGroupRepository.findById.mockResolvedValue(mockGroup);
 
-      await expect(
-        service.update(mockGroupId.toString(), { name: 'Updated' }, nonOwnerUserId)
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.update(mockGroupId.toString(), { name: 'Updated' }, nonOwnerUserId)).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -155,15 +151,15 @@ describe('GroupService', () => {
       owner: { _id: mockUserId },
       members: [
         { userId: { _id: mockUserId }, role: GroupRole.ADMIN },
-        { userId: { _id: mockMemberId }, role: GroupRole.MEMBER }
-      ]
+        { userId: { _id: mockMemberId }, role: GroupRole.MEMBER },
+      ],
     };
 
     describe('addMember', () => {
       it('should add member if requester is admin', async () => {
         const addMemberDto: AddMemberDto = {
           userId: new Types.ObjectId(),
-          role: GroupRole.MEMBER
+          role: GroupRole.MEMBER,
         };
 
         mockGroupRepository.findById.mockResolvedValue(mockGroup);
@@ -171,25 +167,19 @@ describe('GroupService', () => {
 
         const result = await service.addMember(mockGroupId.toString(), addMemberDto, mockUserId);
 
-        expect(repository.addMember).toHaveBeenCalledWith(
-          mockGroupId,
-          addMemberDto.userId,
-          addMemberDto.role
-        );
+        expect(repository.addMember).toHaveBeenCalledWith(mockGroupId, addMemberDto.userId, addMemberDto.role);
         expect(result.members).toHaveLength(3);
       });
 
       it('should throw ForbiddenException if member already exists', async () => {
         const addMemberDto: AddMemberDto = {
           userId: mockMemberId,
-          role: GroupRole.MEMBER
+          role: GroupRole.MEMBER,
         };
 
         mockGroupRepository.findById.mockResolvedValue(mockGroup);
 
-        await expect(
-          service.addMember(mockGroupId.toString(), addMemberDto, mockUserId)
-        ).rejects.toThrow(ForbiddenException);
+        await expect(service.addMember(mockGroupId.toString(), addMemberDto, mockUserId)).rejects.toThrow(ForbiddenException);
       });
     });
 
@@ -198,14 +188,10 @@ describe('GroupService', () => {
         mockGroupRepository.findById.mockResolvedValue(mockGroup);
         mockGroupRepository.removeMember.mockResolvedValue({
           ...mockGroup,
-          members: [mockGroup.members[0]]
+          members: [mockGroup.members[0]],
         });
 
-        const result = await service.removeMember(
-          mockGroupId.toString(),
-          mockMemberId.toString(),
-          mockUserId
-        );
+        const result = await service.removeMember(mockGroupId.toString(), mockMemberId.toString(), mockUserId);
 
         expect(repository.removeMember).toHaveBeenCalledWith(mockGroupId, mockMemberId);
         expect(result.members).toHaveLength(1);
@@ -214,9 +200,7 @@ describe('GroupService', () => {
       it('should throw ForbiddenException if trying to remove owner', async () => {
         mockGroupRepository.findById.mockResolvedValue(mockGroup);
 
-        await expect(
-          service.removeMember(mockGroupId.toString(), mockUserId.toString(), mockUserId)
-        ).rejects.toThrow(ForbiddenException);
+        await expect(service.removeMember(mockGroupId.toString(), mockUserId.toString(), mockUserId)).rejects.toThrow(ForbiddenException);
       });
     });
   });
@@ -226,7 +210,7 @@ describe('GroupService', () => {
       _id: mockGroupId,
       owner: { _id: mockUserId },
       members: [{ userId: { _id: mockUserId }, lastRead: new Date(), joinedAt: new Date() }],
-      lastMessage: { sentAt: new Date(), content: 'test' }
+      lastMessage: { sentAt: new Date(), content: 'test' },
     };
 
     describe('checkMessageAccess', () => {
@@ -242,9 +226,7 @@ describe('GroupService', () => {
         const nonMemberUserId = new Types.ObjectId();
         mockGroupRepository.findById.mockResolvedValue(mockGroup);
 
-        await expect(
-          service.checkMessageAccess(mockGroupId.toString(), nonMemberUserId)
-        ).rejects.toThrow(ForbiddenException);
+        await expect(service.checkMessageAccess(mockGroupId.toString(), nonMemberUserId)).rejects.toThrow(ForbiddenException);
       });
     });
 
@@ -252,27 +234,15 @@ describe('GroupService', () => {
       it('should update last message', async () => {
         const messageId = new Types.ObjectId();
         const content = 'New message';
-        
+
         mockGroupRepository.updateLastMessage.mockResolvedValue({
           ...mockGroup,
-          lastMessage: { messageId, content, type: MessageType.TEXT }
+          lastMessage: { messageId, content, type: MessageType.TEXT },
         });
 
-        const result = await service.updateLastMessage(
-          mockGroupId.toString(),
-          messageId,
-          content,
-          mockUserId,
-          MessageType.TEXT
-        );
+        const result = await service.updateLastMessage(mockGroupId.toString(), messageId, content, mockUserId, MessageType.TEXT);
 
-        expect(repository.updateLastMessage).toHaveBeenCalledWith(
-          mockGroupId,
-          messageId,
-          content,
-          mockUserId,
-          MessageType.TEXT
-        );
+        expect(repository.updateLastMessage).toHaveBeenCalledWith(mockGroupId, messageId, content, mockUserId, MessageType.TEXT);
         expect(result.lastMessage.content).toBe(content);
       });
     });
@@ -291,9 +261,7 @@ describe('GroupService', () => {
         const nonMemberUserId = new Types.ObjectId();
         mockGroupRepository.findById.mockResolvedValue(mockGroup);
 
-        await expect(
-          service.getUnreadCount(mockGroupId.toString(), nonMemberUserId)
-        ).rejects.toThrow(ForbiddenException);
+        await expect(service.getUnreadCount(mockGroupId.toString(), nonMemberUserId)).rejects.toThrow(ForbiddenException);
       });
     });
   });

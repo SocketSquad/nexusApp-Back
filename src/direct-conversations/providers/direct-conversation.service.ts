@@ -6,9 +6,7 @@ import { ICreateDirectConversation, ILastMessage } from '../interfaces/direct-co
 
 @Injectable()
 export class DirectConversationService {
-  constructor(
-    private readonly directConversationRepository: DirectConversationRepository,
-  ) {}
+  constructor(private readonly directConversationRepository: DirectConversationRepository) {}
 
   async create(data: ICreateDirectConversation): Promise<DirectConversation> {
     if (data.participants.length !== 2) {
@@ -18,9 +16,7 @@ export class DirectConversationService {
   }
 
   async findById(id: string): Promise<DirectConversation> {
-    const conversation = await this.directConversationRepository.findById(
-      new Types.ObjectId(id),
-    );
+    const conversation = await this.directConversationRepository.findById(new Types.ObjectId(id));
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
     }
@@ -28,34 +24,19 @@ export class DirectConversationService {
   }
 
   async findByParticipant(userId: string): Promise<DirectConversation[]> {
-    return this.directConversationRepository.findByParticipant(
-      new Types.ObjectId(userId),
-    );
+    return this.directConversationRepository.findByParticipant(new Types.ObjectId(userId));
   }
 
-  async updateLastMessage(
-    id: string,
-    lastMessage: ILastMessage,
-  ): Promise<DirectConversation> {
-    const conversation = await this.directConversationRepository.updateLastMessage(
-      new Types.ObjectId(id),
-      lastMessage,
-    );
+  async updateLastMessage(id: string, lastMessage: ILastMessage): Promise<DirectConversation> {
+    const conversation = await this.directConversationRepository.updateLastMessage(new Types.ObjectId(id), lastMessage);
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
     }
     return conversation;
   }
 
-  async updateLastRead(
-    conversationId: string,
-    userId: string,
-  ): Promise<DirectConversation> {
-    const conversation = await this.directConversationRepository.updateLastRead(
-      new Types.ObjectId(conversationId),
-      new Types.ObjectId(userId),
-      new Date(),
-    );
+  async updateLastRead(conversationId: string, userId: string): Promise<DirectConversation> {
+    const conversation = await this.directConversationRepository.updateLastRead(new Types.ObjectId(conversationId), new Types.ObjectId(userId), new Date());
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
     }
@@ -63,9 +44,7 @@ export class DirectConversationService {
   }
 
   async delete(id: string): Promise<DirectConversation> {
-    const conversation = await this.directConversationRepository.delete(
-      new Types.ObjectId(id),
-    );
+    const conversation = await this.directConversationRepository.delete(new Types.ObjectId(id));
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
     }
