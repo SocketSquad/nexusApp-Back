@@ -1,0 +1,39 @@
+### Create a new direct message
+POST http://localhost:3000/direct-messages
+Content-Type: application/json
+
+{
+    "conversationId": "65372028031c8c9a26219799",
+    "senderId": "65372034031c8c9a2621979e",
+    "content": "Hello! This is a test message",
+    "type": "text"
+}
+
+### Get messages for a conversation (with pagination)
+GET http://localhost:3000/direct-messages/conversation/65372028031c8c9a26219799?limit=50&before=2024-03-15T10:30:00.000Z
+
+### Get messages for a conversation (without pagination)
+GET http://localhost:3000/direct-messages/conversation/65372028031c8c9a26219799
+
+### Get a specific message by ID
+GET http://localhost:3000/direct-messages/65372028031c8c9a26219799
+
+### Update a message
+PUT http://localhost:3000/direct-messages/65372028031c8c9a26219799
+Content-Type: application/json
+
+{
+    "content": "Updated message content",
+    "attachments": [
+        "65372045031c8c9a26219800"
+    ]
+}
+
+### Delete a message
+DELETE http://localhost:3000/direct-messages/65372028031c8c9a26219799
+
+### Get message count for a conversation
+GET http://localhost:3000/direct-messages/conversation/65372028031c8c9a26219799/count
+
+### Get latest message from a conversation
+GET http://localhost:3000/direct-messages/conversation/65372028031c8c9a26219799/latest
