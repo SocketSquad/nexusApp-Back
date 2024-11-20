@@ -1,0 +1,7 @@
+PATCH http://localhost:3000/friends/673cac495a6ce0a7c6870345
+Content-Type: application/json
+{
+
+  "status":"BLOCKED"
+}
+
