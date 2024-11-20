@@ -20,7 +20,7 @@ import { FriendRequestModule } from './friends-requests/friends-requests.module'
       isGlobal: true,
     }),
     DatabaseModule,
-    DirectConversationsModule,
+    DirectConversationModule,
     UsersModule,
     GroupsModule,
     DirectMessageModule,
