@@ -7,10 +7,10 @@ import { DirectConversation } from '../schemas/direct-conversations.schema';
 
 describe('DirectConversationService', () => {
   let service: DirectConversationService;
-  let repository: DirectConversationRepository;
 
   const mockRepository = {
     
+
     create: jest.fn(),
     findById: jest.fn(),
     findByParticipant: jest.fn(),
@@ -31,7 +31,7 @@ describe('DirectConversationService', () => {
     }).compile();
 
     service = module.get<DirectConversationService>(DirectConversationService);
-    repository = module.get<DirectConversationRepository>(DirectConversationRepository);
+ 
   });
 
   afterEach(() => {
