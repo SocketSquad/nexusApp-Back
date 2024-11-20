@@ -10,6 +10,7 @@ describe('DirectConversationService', () => {
   let repository: DirectConversationRepository;
 
   const mockRepository = {
+    
     create: jest.fn(),
     findById: jest.fn(),
     findByParticipant: jest.fn(),

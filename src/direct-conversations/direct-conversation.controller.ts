@@ -16,7 +16,7 @@ import {
   import { CreateDirectConversationDto, ParticipantDto } from './dtos/create-direct-conversation.dto';
   import { UpdateLastMessageDto } from './dtos/update-last-message.dto';
   import { ConversationResponseDto } from './dtos/conversation-response.dto';
-  import { ICreateDirectConversation, IParticipant } from './interfaces/direct-conversation.interface';
+  import { ICreateDirectConversation} from './interfaces/direct-conversation.interface';
   import { ILastMessage } from './interfaces/direct-conversation.interface';
   import {
     ConversationNotFoundException,
@@ -48,7 +48,7 @@ import {
           })),
         };
         return await this.directConversationService.create(transformedData);
-      } catch (error) {
+      } catch  {
         throw new ConversationCreationException();
       }
     }
@@ -67,7 +67,7 @@ import {
         throw new ConversationNotFoundException();
       }
       return conversation;
-    } catch (error) {
+    } catch  {
       throw new ConversationNotFoundException();
     }
   }
@@ -84,7 +84,7 @@ import {
   ): Promise<DirectConversation[]> {
     try {
       return await this.directConversationService.findByParticipant(userId);
-    } catch (error) {
+    } catch {
       throw new ConversationNotFoundException();
     }
   }
@@ -108,7 +108,7 @@ import {
         sentAt: updateDto.sentAt || new Date(),
       };
       return await this.directConversationService.updateLastMessage(id, transformedData);
-    } catch (error) {
+    } catch  {
       throw new ConversationUpdateException();
     }
   }
@@ -126,7 +126,7 @@ import {
   ): Promise<DirectConversation> {
     try {
       return await this.directConversationService.updateLastRead(id, userId);
-    } catch (error) {
+    } catch {
       throw new ConversationUpdateException();
     }
   }
@@ -142,7 +142,7 @@ import {
   async delete(@Param('id') id: string): Promise<DirectConversation> {
     try {
       return await this.directConversationService.delete(id);
-    } catch (error) {
+    } catch  {
       throw new ConversationDeletionException();
     }
   }

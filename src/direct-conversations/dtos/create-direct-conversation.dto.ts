@@ -1,7 +1,7 @@
 import { IsArray, IsNotEmpty, ValidateNested, ArrayMinSize, ArrayMaxSize } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+
 
 export class ParticipantDto {
   @ApiProperty({
