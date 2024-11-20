@@ -1,11 +1,29 @@
+import { Types } from 'mongoose';
 import { GroupMessage } from '../schemas/group-message.schema';
 import { CreateGroupMessageDto } from '../dtos/create-group-message.dto';
 import { UpdateGroupMessageDto } from '../dtos/update-group-message.dto';
 
 export interface IGroupMessagesService {
-  create(createMessageDto: CreateGroupMessageDto): Promise<GroupMessage>;
-  findByConversation(conversationId: string, page: number, limit: number): Promise<{ messages: GroupMessage[]; total: number }>;
+  create(
+    groupId: string,
+    senderId: Types.ObjectId,
+    createMessageDto: CreateGroupMessageDto
+  ): Promise<GroupMessage>;
+  
   findById(id: string): Promise<GroupMessage>;
-  update(id: string, updateMessageDto: UpdateGroupMessageDto, userId: string): Promise<GroupMessage>;
-  delete(id: string, userId: string): Promise<void>;
+  
+  findByGroupId(
+    groupId: string,
+    userId: Types.ObjectId,
+    limit?: number,
+    before?: string
+  ): Promise<GroupMessage[]>;
+  
+  update(
+    id: string,
+    userId: Types.ObjectId,
+    updateMessageDto: UpdateGroupMessageDto
+  ): Promise<GroupMessage>;
+  
+  delete(id: string, userId: Types.ObjectId): Promise<GroupMessage>;
 }

@@ -10,13 +10,13 @@ import { IGroupRepository } from '../interfaces/group.repository.interface';
 export class GroupRepository implements IGroupRepository {
   constructor(@InjectModel(Group.name) private readonly groupModel: Model<Group>) {}
 
-  async create(createGroupDto: CreateGroupDto, ownerId: string): Promise<Group> {
+  async create(createGroupDto: CreateGroupDto, ownerId: Types.ObjectId): Promise<Group> {
     const group = new this.groupModel({
       ...createGroupDto,
-      owner: new Types.ObjectId(ownerId),
+      owner: ownerId,
       members: [
         {
-          userId: new Types.ObjectId(ownerId),
+          userId: ownerId,
           role: 'admin',
           joinedAt: new Date(),
         },
@@ -29,26 +29,26 @@ export class GroupRepository implements IGroupRepository {
     return this.groupModel.find(filter).populate('owner', 'username email').populate('members.userId', 'username email').exec();
   }
 
-  async findById(id: string): Promise<Group> {
+  async findById(id: Types.ObjectId): Promise<Group> {
     return this.groupModel.findById(id).populate('owner', 'username email').populate('members.userId', 'username email').exec();
   }
 
-  async update(id: string, updateGroupDto: UpdatedGroupDto): Promise<Group> {
+  async update(id: Types.ObjectId, updateGroupDto: UpdatedGroupDto): Promise<Group> {
     return this.groupModel.findByIdAndUpdate(id, updateGroupDto, { new: true }).exec();
   }
 
-  async delete(id: string): Promise<Group> {
+  async delete(id: Types.ObjectId): Promise<Group> {
     return this.groupModel.findByIdAndDelete(id).exec();
   }
 
-  async addMember(groupId: string, userId: string, role: string = 'member'): Promise<Group> {
+  async addMember(groupId: Types.ObjectId, userId: Types.ObjectId, role: string = 'member'): Promise<Group> {
     return this.groupModel
       .findByIdAndUpdate(
         groupId,
         {
           $push: {
             members: {
-              userId: new Types.ObjectId(userId),
+              userId,
               role,
               joinedAt: new Date(),
             },
@@ -60,12 +60,12 @@ export class GroupRepository implements IGroupRepository {
       .exec();
   }
 
-  async removeMember(groupId: string, userId: string): Promise<Group> {
+  async removeMember(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<Group> {
     return this.groupModel
       .findByIdAndUpdate(
         groupId,
         {
-          $pull: { members: { userId: new Types.ObjectId(userId) } },
+          $pull: { members: { userId } },
           lastActivityAt: new Date(),
         },
         { new: true },
@@ -73,12 +73,12 @@ export class GroupRepository implements IGroupRepository {
       .exec();
   }
 
-  async updateMemberRole(groupId: string, userId: string, newRole: string): Promise<Group> {
+  async updateMemberRole(groupId: Types.ObjectId, userId: Types.ObjectId, newRole: string): Promise<Group> {
     return this.groupModel
       .findOneAndUpdate(
         {
           _id: groupId,
-          'members.userId': new Types.ObjectId(userId),
+          'members.userId': userId,
         },
         {
           $set: { 'members.$.role': newRole },
@@ -87,5 +87,43 @@ export class GroupRepository implements IGroupRepository {
         { new: true },
       )
       .exec();
+  }
+
+  async updateLastMessage(
+    groupId: Types.ObjectId,
+    messageId: Types.ObjectId,
+    content: string,
+    senderId: Types.ObjectId,
+    type: string
+  ): Promise<Group> {
+    return this.groupModel.findByIdAndUpdate(
+      groupId,
+      {
+        lastMessage: {
+          _id: messageId,
+          content,
+          senderId,
+          sentAt: new Date(),
+          type,
+        },
+        lastActivityAt: new Date(),
+      },
+      { new: true }
+    ).exec();
+  }
+
+  async updateMemberLastRead(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<Group> {
+    return this.groupModel.findOneAndUpdate(
+      {
+        _id: groupId,
+        'members.userId': userId,
+      },
+      {
+        $set: {
+          'members.$.lastRead': new Date(),
+        },
+      },
+      { new: true }
+    ).exec();
   }
 }

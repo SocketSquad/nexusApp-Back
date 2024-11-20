@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { MessageType } from '@/utils/types';
 
 @Schema({
@@ -9,11 +9,11 @@ import { MessageType } from '@/utils/types';
 export class GroupMessage extends Document {
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: 'GroupConversation',
+    ref: 'Group',
     required: true,
     index: true,
   })
-  conversationId: MongooseSchema.Types.ObjectId;
+  groupId: Types.ObjectId;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
@@ -21,32 +21,29 @@ export class GroupMessage extends Document {
     required: true,
     index: true,
   })
-  senderId: MongooseSchema.Types.ObjectId;
+  senderId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({
+    required: true,
+    trim: true,
+  })
   content: string;
 
   @Prop({
     type: String,
     enum: Object.values(MessageType),
     default: MessageType.TEXT,
-    required: true,
   })
   type: MessageType;
 
-  @Prop({ type: [String], default: [] })
-  mentions: string[];
+  @Prop({ type: Boolean, default: false })
+  hasAttachments: boolean;
 
-  @Prop({
-    type: [
-      {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Attachment',
-      },
-    ],
-    default: [],
-  })
-  attachments: MongooseSchema.Types.ObjectId[];
+  @Prop({ type: Boolean, default: false })
+  isEdited: boolean;
+
+  @Prop({ type: Date })
+  deletedAt?: Date;
 
   createdAt: Date;
   updatedAt: Date;
