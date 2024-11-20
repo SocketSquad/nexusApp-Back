@@ -1,1 +1,37 @@
-POST http://localhost:3000/conversations
+### Create a new direct conversation
+POST http://localhost:3000/direct-conversations
+Content-Type: application/json
+
+{
+    "participants": [
+        {
+            "userId": "65372028031c8c9a26219799"
+        },
+        {
+            "userId": "65372034031c8c9a2621979e"
+        }
+    ]
+}
+
+### Get conversation by ID
+GET http://localhost:3000/direct-conversations/65372028031c8c9a26219799
+
+### Get all conversations for a specific user
+GET http://localhost:3000/direct-conversations/user/65372028031c8c9a26219799
+
+### Update last message in conversation
+PUT http://localhost:3000/direct-conversations/65372028031c8c9a26219799/last-message
+Content-Type: application/json
+
+{
+    "_id": "65372028031c8c9a26219799",
+    "content": "Hello, how are you?",
+    "senderId": "65372034031c8c9a2621979e",
+    "sentAt": "2024-03-15T10:30:00.000Z"
+}
+
+### Mark conversation as read for user
+PUT http://localhost:3000/direct-conversations/65372028031c8c9a26219799/read/65372034031c8c9a2621979e
+
+### Delete conversation
+DELETE http://localhost:3000/direct-conversations/65372028031c8c9a26219799

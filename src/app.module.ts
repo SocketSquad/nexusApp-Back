@@ -5,7 +5,7 @@ import { DirectConversationModule } from './direct-conversations/direct-conversa
 import { GroupConversationsModule } from './group-conversations/group-conversations.module';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './groups/groups.module';
-import {DirectMessageModule } from './direct-messages/direct-messages.module';
+import { DirectMessageModule } from './direct-messages/direct-messages.module';
 import { GroupMessagesModule } from './group-messages/group-messages.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { SessionsModule } from './sessions/sessions.module';
