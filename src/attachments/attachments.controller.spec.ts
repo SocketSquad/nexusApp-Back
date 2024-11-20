@@ -6,7 +6,6 @@ import { AttachmentType } from '@/utils/types';
 import { CreateAttachmentDto } from './dtos/create-attachments.dto';
 import { QueryAttachmentDto } from './dtos/query-attachments.dto';
 
-
 describe('AttachmentsController', () => {
   let controller: AttachmentsController;
   let service: AttachmentsService;
@@ -68,10 +67,7 @@ describe('AttachmentsController', () => {
 
       const result = await controller.create(createAttachmentDto, { user: mockUser });
 
-      expect(service.create).toHaveBeenCalledWith(
-        createAttachmentDto,
-        mockUser.id,
-      );
+      expect(service.create).toHaveBeenCalledWith(createAttachmentDto, mockUser.id);
       expect(result).toEqual(mockAttachment);
     });
   });
@@ -92,13 +88,9 @@ describe('AttachmentsController', () => {
       const attachments = [mockAttachment];
       mockAttachmentsService.findByMessageId.mockResolvedValue(attachments);
 
-      const result = await controller.findByMessageId(
-        mockAttachment.messageId.toString(),
-      );
+      const result = await controller.findByMessageId(mockAttachment.messageId.toString());
 
-      expect(service.findByMessageId).toHaveBeenCalledWith(
-        mockAttachment.messageId.toString(),
-      );
+      expect(service.findByMessageId).toHaveBeenCalledWith(mockAttachment.messageId.toString());
       expect(result).toEqual(attachments);
     });
   });
@@ -127,10 +119,7 @@ describe('AttachmentsController', () => {
         user: mockUser,
       });
 
-      expect(service.delete).toHaveBeenCalledWith(
-        mockAttachment._id.toString(),
-        mockUser.id,
-      );
+      expect(service.delete).toHaveBeenCalledWith(mockAttachment._id.toString(), mockUser.id);
       expect(result).toEqual(mockAttachment);
     });
   });

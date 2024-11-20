@@ -11,6 +11,7 @@ import { SessionsModule } from './sessions/sessions.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UploadModule } from './upload/upload.module';
 import { FriendModule } from './friends/friends.module';
 import { FriendRequestModule } from './friends-requests/friends-requests.module';
 
@@ -30,8 +31,7 @@ import { FriendRequestModule } from './friends-requests/friends-requests.module'
     FriendRequestModule ,
     SessionsModule,
     AuthModule,
-    FriendModule,
-    FriendRequestModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

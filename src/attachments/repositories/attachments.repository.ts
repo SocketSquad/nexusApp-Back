@@ -6,7 +6,6 @@ import { QueryAttachmentDto } from '../dtos/query-attachments.dto';
 import { IAttachmentsRepository } from '../interfaces/attachments.repository.interface';
 import { Attachment } from '../schema/attachment.schema';
 
-
 @Injectable()
 export class AttachmentsRepository implements IAttachmentsRepository {
   constructor(
@@ -14,10 +13,7 @@ export class AttachmentsRepository implements IAttachmentsRepository {
     private readonly attachmentModel: Model<Attachment>,
   ) {}
 
-  async create(
-    createAttachmentDto: CreateAttachmentDto,
-    uploaderId: string,
-  ): Promise<Attachment> {
+  async create(createAttachmentDto: CreateAttachmentDto, uploaderId: string): Promise<Attachment> {
     const attachment = new this.attachmentModel({
       ...createAttachmentDto,
       uploaderId,

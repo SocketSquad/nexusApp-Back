@@ -5,15 +5,11 @@ import { QueryAttachmentDto } from '../dtos/query-attachments.dto';
 import { IAttachmentsService } from '../interfaces/attachments.service.interface';
 import { Attachment } from '../schema/attachment.schema';
 
-
 @Injectable()
 export class AttachmentsService implements IAttachmentsService {
   constructor(private readonly attachmentsRepository: AttachmentsRepository) {}
 
-  async create(
-    createAttachmentDto: CreateAttachmentDto,
-    uploaderId: string,
-  ): Promise<Attachment> {
+  async create(createAttachmentDto: CreateAttachmentDto, uploaderId: string): Promise<Attachment> {
     return this.attachmentsRepository.create(createAttachmentDto, uploaderId);
   }
 
@@ -35,12 +31,12 @@ export class AttachmentsService implements IAttachmentsService {
 
   async delete(id: string, userId: string): Promise<Attachment> {
     const attachment = await this.findById(id);
-    
+
     // Check  user is the uploader
     if (attachment.uploaderId.toString() !== userId) {
-        throw new ForbiddenException('Unauthorized to delete this attachment');
+      throw new ForbiddenException('Unauthorized to delete this attachment');
     }
-    
+
     return this.attachmentsRepository.delete(id);
   }
 
