@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-import { DirectConversationsModule } from './direct-conversations/direct-conversations.module';
+import { DirectConversationModule } from './direct-conversations/direct-conversations.module';
 import { GroupConversationsModule } from './group-conversations/group-conversations.module';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './groups/groups.module';
@@ -21,7 +21,7 @@ import { FriendRequestModule } from './friends-requests/friends-requests.module'
       isGlobal: true,
     }),
     DatabaseModule,
-    DirectConversationsModule,
+    DirectConversationModule ,
     GroupConversationsModule,
     UsersModule,
     GroupsModule,
