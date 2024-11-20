@@ -53,8 +53,9 @@ export class GroupController {
   async addMember(
     @Param('id') id: string,
     @Body() addMemberDto: AddMemberDto,
-    @Body('requesterId') requesterId: string
+    @Req() req : any
   ) {
+    const requesterId = req.user.userId;
     const requesterObjectId = new Types.ObjectId(String(requesterId));
     return this.groupService.addMember(id, addMemberDto, requesterObjectId);
   }
@@ -64,8 +65,9 @@ export class GroupController {
   async removeMember(
     @Param('id') id: string,
     @Param('memberId') memberId: string,
-    @Body('requesterId') requesterId: string
+    @Req() req : any
   ) {
+    const requesterId = req.user.userId;
     const requesterObjectId = new Types.ObjectId(String(requesterId));
     return this.groupService.removeMember(id, memberId, requesterObjectId);
   }
@@ -76,8 +78,9 @@ export class GroupController {
     @Param('id') id: string,
     @Param('memberId') memberId: string,
     @Body('role') role: string,
-    @Body('requesterId') requesterId: string
+    @Req() req : any
   ) {
+    const requesterId = req.user.userId;
     const requesterObjectId = new Types.ObjectId(String(requesterId));
     return this.groupService.updateMemberRole(id, memberId, role, requesterObjectId);
   }

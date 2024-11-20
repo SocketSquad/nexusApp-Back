@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
 import { Types } from 'mongoose';
 import { GroupController } from './groups.controller';
 import { GroupService } from './providers/groups.service';
@@ -55,11 +54,14 @@ describe('GroupController (Integration)', () => {
         description: 'Test Description',
         privacy: GroupPrivacy.PUBLIC,
       };
-      const userId = new Types.ObjectId().toString();
+      const req = { user: { userId: new Types.ObjectId().toString() } };
 
-      const result = await controller.create(createGroupDto, userId);
+      const result = await controller.create(createGroupDto, req);
 
-      expect(service.create).toHaveBeenCalledWith(createGroupDto, userId);
+      expect(service.create).toHaveBeenCalledWith(
+        createGroupDto, 
+        expect.any(Types.ObjectId)
+      );
       expect(result).toBeDefined();
       expect(result.name).toBe(mockGroup.name);
     });
@@ -78,6 +80,7 @@ describe('GroupController (Integration)', () => {
   describe('findOne', () => {
     it('should return a single group', async () => {
       const groupId = mockGroup._id.toString();
+
       const result = await controller.findOne(groupId);
 
       expect(service.findById).toHaveBeenCalledWith(groupId);
@@ -89,14 +92,33 @@ describe('GroupController (Integration)', () => {
   describe('update', () => {
     it('should update a group', async () => {
       const groupId = mockGroup._id.toString();
-      const userId = mockGroup.owner.toString();
       const updateGroupDto: UpdatedGroupDto = {
         name: 'Updated Group Name',
       };
+      const req = { user: { userId: mockGroup.owner.toString() } };
 
-      const result = await controller.update(groupId, updateGroupDto, userId);
+      const result = await controller.update(groupId, updateGroupDto, req);
 
-      expect(service.update).toHaveBeenCalledWith(groupId, updateGroupDto, userId);
+      expect(service.update).toHaveBeenCalledWith(
+        groupId,
+        updateGroupDto,
+        expect.any(Types.ObjectId)
+      );
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove a group', async () => {
+      const groupId = mockGroup._id.toString();
+      const req = { user: { userId: mockGroup.owner.toString() } };
+
+      const result = await controller.remove(groupId, req);
+
+      expect(service.delete).toHaveBeenCalledWith(
+        groupId,
+        expect.any(Types.ObjectId)
+      );
       expect(result).toBeDefined();
     });
   });
@@ -104,15 +126,61 @@ describe('GroupController (Integration)', () => {
   describe('addMember', () => {
     it('should add a member to the group', async () => {
       const groupId = mockGroup._id.toString();
+      const newMemberId = new Types.ObjectId();
       const addMemberDto: AddMemberDto = {
-        userId: new Types.ObjectId().toString(),
+        userId: newMemberId,
         role: GroupRole.MEMBER,
       };
-      const requesterId = mockGroup.owner.toString();
+      const req = { user: { userId: mockGroup.owner.toString() } };
 
-      const result = await controller.addMember(groupId, addMemberDto, requesterId);
+      const result = await controller.addMember(groupId, addMemberDto, req);
 
-      expect(service.addMember).toHaveBeenCalledWith(groupId, addMemberDto, requesterId);
+      expect(service.addMember).toHaveBeenCalledWith(
+        groupId,
+        addMemberDto,
+        expect.any(Types.ObjectId)
+      );
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('removeMember', () => {
+    it('should remove a member from the group', async () => {
+      const groupId = mockGroup._id.toString();
+      const memberId = new Types.ObjectId().toString();
+      const req = { user: { userId: mockGroup.owner.toString() } };
+
+      const result = await controller.removeMember(groupId, memberId, req);
+
+      expect(service.removeMember).toHaveBeenCalledWith(
+        groupId,
+        memberId,
+        expect.any(Types.ObjectId)
+      );
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('updateMemberRole', () => {
+    it('should update a member role', async () => {
+      const groupId = mockGroup._id.toString();
+      const memberId = new Types.ObjectId().toString();
+      const role = GroupRole.ADMIN;
+      const req = { user: { userId: mockGroup.owner.toString() } };
+
+      const result = await controller.updateMemberRole(
+        groupId,
+        memberId,
+        role,
+        req
+      );
+
+      expect(service.updateMemberRole).toHaveBeenCalledWith(
+        groupId,
+        memberId,
+        role,
+        expect.any(Types.ObjectId)
+      );
       expect(result).toBeDefined();
     });
   });

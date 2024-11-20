@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
-
 import { Types } from 'mongoose';
 import { GroupService } from './groups.service';
 import { GroupRepository } from '../repositories/groups.repository';
 import { GroupPrivacy, GroupRole } from '@/utils/types';
 import { CreateGroupDto } from '../dtos/create-group.dto';
+import { UpdatedGroupDto } from '../dtos/update-group.dto';
+import { AddMemberDto } from '../dtos/add-member.dto';
 
 describe('GroupService (Unit)', () => {
   let service: GroupService;
@@ -17,7 +17,7 @@ describe('GroupService (Unit)', () => {
     name: 'Test Group',
     description: 'Test Description',
     privacy: GroupPrivacy.PUBLIC,
-    owner: new Types.ObjectId(),
+    owner: { _id: new Types.ObjectId() },
     members: [],
     lastActivityAt: new Date(),
   };
@@ -55,7 +55,7 @@ describe('GroupService (Unit)', () => {
         description: 'Test Description',
         privacy: GroupPrivacy.PUBLIC,
       };
-      const userId = new Types.ObjectId().toString();
+      const userId = new Types.ObjectId();
 
       const result = await service.create(createGroupDto, userId);
 
@@ -69,7 +69,7 @@ describe('GroupService (Unit)', () => {
       const groupId = mockGroup._id.toString();
       const result = await service.findById(groupId);
 
-      expect(repository.findById).toHaveBeenCalledWith(groupId);
+      expect(repository.findById).toHaveBeenCalledWith(new Types.ObjectId(groupId));
       expect(result).toEqual(mockGroup);
     });
 
@@ -81,18 +81,87 @@ describe('GroupService (Unit)', () => {
     });
   });
 
-  describe('addMember', () => {
-    it('should throw ForbiddenException when requester is not admin', async () => {
+  describe('update', () => {
+    it('should update a group when user is owner', async () => {
       const groupId = mockGroup._id.toString();
-      const userId = new Types.ObjectId().toString();
-      const requesterId = new Types.ObjectId().toString();
+      const updateGroupDto: UpdatedGroupDto = { name: 'Updated Name' };
+      const userId = mockGroup.owner._id;
+
+      const result = await service.update(groupId, updateGroupDto, userId);
+
+      expect(repository.update).toHaveBeenCalledWith(
+        new Types.ObjectId(groupId),
+        updateGroupDto
+      );
+      expect(result).toEqual(mockGroup);
+    });
+
+    it('should throw ForbiddenException when user is not owner', async () => {
+      const groupId = mockGroup._id.toString();
+      const updateGroupDto: UpdatedGroupDto = { name: 'Updated Name' };
+      const userId = new Types.ObjectId();
+
+      await expect(
+        service.update(groupId, updateGroupDto, userId)
+      ).rejects.toThrow(ForbiddenException);
+    });
+  });
+
+  describe('addMember', () => {
+    it('should add member when requester is admin', async () => {
+      const groupId = mockGroup._id.toString();
+      const newMemberId = new Types.ObjectId();
+      const requesterId = mockGroup.owner._id;
+      
+      const addMemberDto: AddMemberDto = {
+        userId: newMemberId,
+        role: GroupRole.MEMBER,
+      };
+      
+      mockGroupRepository.findById.mockResolvedValueOnce({
+        ...mockGroup,
+        members: [{ userId: requesterId, role: 'admin' }],
+      });
+
+      const result = await service.addMember(
+        groupId,
+        addMemberDto,
+        requesterId
+      );
+
+      expect(repository.addMember).toHaveBeenCalledWith(
+        new Types.ObjectId(groupId),
+        addMemberDto.userId,
+        GroupRole.MEMBER
+      );
+      expect(result).toEqual(mockGroup);
+    });
+
+    it('should throw ForbiddenException when member already exists', async () => {
+      const groupId = mockGroup._id.toString();
+      const memberId = new Types.ObjectId();
+      const requesterId = mockGroup.owner._id;
+
+      const addMemberDto: AddMemberDto = {
+        userId: memberId,
+        role: GroupRole.MEMBER,
+      };
 
       mockGroupRepository.findById.mockResolvedValueOnce({
         ...mockGroup,
-        members: [{ userId: requesterId, role: 'member' }],
+        members: [
+          { userId: requesterId, role: 'admin' },
+          { userId: memberId, role: 'member' },
+        ],
       });
 
-      await expect(service.addMember(groupId, { userId, role: GroupRole.MEMBER }, requesterId)).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.addMember(
+          groupId,
+          addMemberDto,
+          requesterId
+        )
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

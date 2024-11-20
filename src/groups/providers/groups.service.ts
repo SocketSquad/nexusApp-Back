@@ -31,8 +31,6 @@ export class GroupService implements IGroupService {
 
   async update(id: string, updateGroupDto: UpdatedGroupDto, userId: Types.ObjectId): Promise<Group> {
     const group = await this.findById(id);
-    console.log("owner",group.owner);
-    console.log("userId",userId);
     if (group.owner._id.toString() !== userId.toString()) {
       throw new ForbiddenException('Only the group owner can update the group');
     }
@@ -47,18 +45,18 @@ export class GroupService implements IGroupService {
     return this.groupRepository.delete(new Types.ObjectId(String(id)));
   }
 
-  async addMember(groupId: string, addMemberDto: AddMemberDto, requesterId: Types.ObjectId): Promise<Group> {
+  async   addMember(groupId: string, addMemberDto: AddMemberDto, requesterId: Types.ObjectId): Promise<Group> {
     const group = await this.findById(groupId);
 
     const requesterMember = group.members.find(
-      (m) => m.userId.toString() === requesterId.toString()
+      (m) => m.userId._id.toString() === requesterId.toString()
     );
     
     if (!requesterMember || (requesterMember.role !== 'admin' && group.owner._id.toString() !== requesterId.toString())) {
       throw new ForbiddenException('No permission to add members');
     }
 
-    if (group.members.some((m) => m.userId.toString() === addMemberDto.userId.toString())) {
+    if (group.members.some((m) => m.userId._id.toString() === addMemberDto.userId.toString())) {
       throw new ForbiddenException('User is already a member of this group');
     }
 
@@ -73,7 +71,7 @@ export class GroupService implements IGroupService {
     const group = await this.findById(groupId);
 
     const requesterMember = group.members.find(
-      (m) => m.userId.toString() === requesterId.toString()
+      (m) => m.userId._id.toString() === requesterId.toString()
     );
     
     if (!requesterMember || (requesterMember.role !== 'admin' && group.owner._id.toString() !== requesterId.toString())) {
@@ -83,6 +81,13 @@ export class GroupService implements IGroupService {
     const memberIdObj = new Types.ObjectId(String(memberId));
     if (group.owner._id.toString() === memberIdObj.toString()) {
       throw new ForbiddenException('Cannot remove the group owner');
+    }
+
+    // Find the member to be removed
+    const memberToRemove = group.members.find(m => m.userId._id.toString() === memberIdObj.toString());
+
+    if (!memberToRemove) {
+      throw new NotFoundException('Member not found');
     }
 
     return this.groupRepository.removeMember(
@@ -101,6 +106,13 @@ export class GroupService implements IGroupService {
     const memberIdObj = new Types.ObjectId(String(memberId));
     if (group.owner._id.toString() === memberIdObj.toString()) {
       throw new ForbiddenException("Cannot change the owner's role");
+    }
+
+    // Find the member to be removed
+    const memberToUpdate = group.members.find(m => m.userId._id.toString() === memberIdObj.toString());
+
+    if (!memberToUpdate) {
+      throw new NotFoundException('Member not found');
     }
 
     return this.groupRepository.updateMemberRole(
