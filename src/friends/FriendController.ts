@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Body,
-  Param,
-  HttpException,
-  HttpStatus,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, HttpException, HttpStatus, Patch } from '@nestjs/common';
 import { FriendService } from './providers/friend.service';
 import { CreateFriendDto } from './dtos/create-friend.dto';
 import { UpdateFriendDto } from './dtos/update-friend.dto';
@@ -32,10 +22,7 @@ export class FriendController {
   async getFriendsByUserId(@Param('userId') userId: string) {
     const friends = await this.friendService.findByUserId(userId);
     if (!friends) {
-      throw new HttpException(
-        'Aucun ami trouvé pour cet utilisateur',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('Aucun ami trouvé pour cet utilisateur', HttpStatus.NOT_FOUND);
     }
     return friends;
   }
@@ -44,14 +31,8 @@ export class FriendController {
    * Mettre à jour le statut d'une relation (ACCEPTED, BLOCKED)
    */
   @Patch(':id')
-  async updateFriendStatus(
-    @Param('id') friendId: string,
-    @Body() updateFriendDto: UpdateFriendDto,
-  ) {
-    const updatedFriend = await this.friendService.updateStatus(
-      friendId,
-      updateFriendDto,
-    );
+  async updateFriendStatus(@Param('id') friendId: string, @Body() updateFriendDto: UpdateFriendDto) {
+    const updatedFriend = await this.friendService.updateStatus(friendId, updateFriendDto);
     if (!updatedFriend) {
       throw new HttpException('Relation non trouvée', HttpStatus.NOT_FOUND);
     }

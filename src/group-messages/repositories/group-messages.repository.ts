@@ -13,11 +13,7 @@ export class GroupMessagesRepository implements IGroupMessagesRepository {
     private readonly messageModel: Model<GroupMessage>,
   ) {}
 
-  async create(
-    groupId: Types.ObjectId,
-    senderId: Types.ObjectId,
-    createMessageDto: CreateGroupMessageDto,
-  ): Promise<GroupMessage> {
+  async create(groupId: Types.ObjectId, senderId: Types.ObjectId, createMessageDto: CreateGroupMessageDto): Promise<GroupMessage> {
     const message = new this.messageModel({
       groupId,
       senderId,
@@ -27,44 +23,29 @@ export class GroupMessagesRepository implements IGroupMessagesRepository {
   }
 
   async findById(id: Types.ObjectId): Promise<GroupMessage> {
-    return this.messageModel
-      .findById(id)
-      .populate('senderId', 'username email')
-      .exec();
+    return this.messageModel.findById(id).populate('senderId', 'username email').exec();
   }
 
-  async findByGroupId(
-    groupId: Types.ObjectId,
-    limit: number = 50,
-    before?: Date,
-  ): Promise<GroupMessage[]> {
-    const query = { 
+  async findByGroupId(groupId: Types.ObjectId, limit: number = 50, before?: Date): Promise<GroupMessage[]> {
+    const query = {
       groupId,
-      deletedAt: { $exists: false }
+      deletedAt: { $exists: false },
     };
-    
+
     if (before) {
       query['createdAt'] = { $lt: before };
     }
 
-    return this.messageModel
-      .find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .populate('senderId', 'username email')
-      .exec();
+    return this.messageModel.find(query).sort({ createdAt: -1 }).limit(limit).populate('senderId', 'username email').exec();
   }
 
-  async update(
-    id: Types.ObjectId,
-    updateMessageDto: UpdateGroupMessageDto,
-  ): Promise<GroupMessage> {
+  async update(id: Types.ObjectId, updateMessageDto: UpdateGroupMessageDto): Promise<GroupMessage> {
     return this.messageModel
       .findByIdAndUpdate(
         id,
-        { 
+        {
           ...updateMessageDto,
-          isEdited: true 
+          isEdited: true,
         },
         { new: true },
       )
@@ -72,25 +53,10 @@ export class GroupMessagesRepository implements IGroupMessagesRepository {
   }
 
   async softDelete(id: Types.ObjectId): Promise<GroupMessage> {
-    return this.messageModel
-      .findByIdAndUpdate(
-        id,
-        { deletedAt: new Date() },
-        { new: true },
-      )
-      .exec();
+    return this.messageModel.findByIdAndUpdate(id, { deletedAt: new Date() }, { new: true }).exec();
   }
 
-  async setHasAttachments(
-    id: Types.ObjectId,
-    hasAttachments: boolean
-  ): Promise<GroupMessage> {
-    return this.messageModel
-      .findByIdAndUpdate(
-        id,
-        { hasAttachments },
-        { new: true },
-      )
-      .exec();
+  async setHasAttachments(id: Types.ObjectId, hasAttachments: boolean): Promise<GroupMessage> {
+    return this.messageModel.findByIdAndUpdate(id, { hasAttachments }, { new: true }).exec();
   }
 }

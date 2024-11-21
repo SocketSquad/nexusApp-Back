@@ -33,7 +33,7 @@ export class GroupController {
     return this.groupService.findById(id);
   }
 
-  // Update group name or description 
+  // Update group name or description
   @Put(':id')
   @ApiOperation({ summary: 'Update group' })
   async update(@Param('id') id: string, @Body() updateGroupDto: UpdatedGroupDto, @Req() req: any) {
@@ -51,11 +51,7 @@ export class GroupController {
 
   @Post(':id/members')
   @ApiOperation({ summary: 'Add member to group' })
-  async addMember(
-    @Param('id') id: string,
-    @Body() addMemberDto: AddMemberDto,
-    @Req() req : any
-  ) {
+  async addMember(@Param('id') id: string, @Body() addMemberDto: AddMemberDto, @Req() req: any) {
     const requesterId = req.user.userId;
     const requesterObjectId = new Types.ObjectId(String(requesterId));
     return this.groupService.addMember(id, addMemberDto, requesterObjectId);
@@ -63,11 +59,7 @@ export class GroupController {
 
   @Delete(':id/members/:memberId')
   @ApiOperation({ summary: 'Remove member from group' })
-  async removeMember(
-    @Param('id') id: string,
-    @Param('memberId') memberId: string,
-    @Req() req : any
-  ) {
+  async removeMember(@Param('id') id: string, @Param('memberId') memberId: string, @Req() req: any) {
     const requesterId = req.user.userId;
     const requesterObjectId = new Types.ObjectId(String(requesterId));
     return this.groupService.removeMember(id, memberId, requesterObjectId);
@@ -76,12 +68,7 @@ export class GroupController {
   //Update member role
   @Put(':id/members/:memberId/role')
   @ApiOperation({ summary: 'Update member role' })
-  async updateMemberRole(
-    @Param('id') id: string,
-    @Param('memberId') memberId: string,
-    @Body('role') role: string,
-    @Req() req : any
-  ) {
+  async updateMemberRole(@Param('id') id: string, @Param('memberId') memberId: string, @Body('role') role: string, @Req() req: any) {
     const requesterId = req.user.userId;
     const requesterObjectId = new Types.ObjectId(String(requesterId));
     return this.groupService.updateMemberRole(id, memberId, role, requesterObjectId);

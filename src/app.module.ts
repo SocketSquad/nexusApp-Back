@@ -28,7 +28,7 @@ import { FriendRequestModule } from './friends-requests/friends-requests.module'
     GroupMessagesModule,
     AttachmentsModule,
     FriendModule,
-    FriendRequestModule ,
+    FriendRequestModule,
     SessionsModule,
     AuthModule,
     UploadModule,

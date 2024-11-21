@@ -6,17 +6,15 @@ import { FriendStatus } from '../../utils/types';
 
 @Injectable()
 export class FriendRequestService {
-  constructor(
-    private readonly friendRequestRepository: FriendRequestRepository,
-  ) {}
+  constructor(private readonly friendRequestRepository: FriendRequestRepository) {}
 
   async create(createFriendRequestDto: CreateFriendRequestDto): Promise<FriendRequest> {
     const { senderId, receiverId } = createFriendRequestDto;
 
     // Check if request already exists
     const existingRequest = await this.friendRequestRepository.findBySenderAndReceiver(
-      senderId,    // Original sender
-      receiverId,  // Original receiver
+      senderId, // Original sender
+      receiverId, // Original receiver
     );
 
     if (existingRequest) {
@@ -25,8 +23,8 @@ export class FriendRequestService {
 
     // Check for reverse request
     const reverseRequest = await this.friendRequestRepository.findBySenderAndReceiver(
-      receiverId,  // This person would be the sender in the reverse request
-      senderId,    // This person would be the receiver in the reverse request
+      receiverId, // This person would be the sender in the reverse request
+      senderId, // This person would be the receiver in the reverse request
     );
 
     if (reverseRequest) {

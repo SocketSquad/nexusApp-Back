@@ -26,8 +26,8 @@ describe('GroupController', () => {
 
   const mockRequest = {
     user: {
-      userId: '507f1f77bcf86cd799439011'
-    }
+      userId: '507f1f77bcf86cd799439011',
+    },
   };
 
   beforeEach(async () => {
@@ -54,7 +54,7 @@ describe('GroupController', () => {
       const createGroupDto: CreateGroupDto = {
         name: 'Test Group',
         description: 'Test Description',
-        privacy: GroupPrivacy.PUBLIC
+        privacy: GroupPrivacy.PUBLIC,
       };
 
       const expectedResult = { id: 'groupId', ...createGroupDto };
@@ -62,10 +62,7 @@ describe('GroupController', () => {
 
       const result = await controller.create(createGroupDto, mockRequest);
 
-      expect(service.create).toHaveBeenCalledWith(
-        createGroupDto,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.create).toHaveBeenCalledWith(createGroupDto, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
   });
@@ -111,18 +108,14 @@ describe('GroupController', () => {
       const groupId = '507f1f77bcf86cd799439011';
       const updateGroupDto: UpdatedGroupDto = {
         name: 'Updated Group',
-        description: 'Updated Description'
+        description: 'Updated Description',
       };
       const expectedResult = { id: groupId, ...updateGroupDto };
       mockGroupService.update.mockResolvedValue(expectedResult);
 
       const result = await controller.update(groupId, updateGroupDto, mockRequest);
 
-      expect(service.update).toHaveBeenCalledWith(
-        groupId,
-        updateGroupDto,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.update).toHaveBeenCalledWith(groupId, updateGroupDto, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
   });
@@ -135,10 +128,7 @@ describe('GroupController', () => {
 
       const result = await controller.remove(groupId, mockRequest);
 
-      expect(service.delete).toHaveBeenCalledWith(
-        groupId,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.delete).toHaveBeenCalledWith(groupId, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
   });
@@ -150,18 +140,14 @@ describe('GroupController', () => {
     it('should add a member to group', async () => {
       const addMemberDto: AddMemberDto = {
         userId: new Types.ObjectId(memberId),
-        role: GroupRole.MEMBER
+        role: GroupRole.MEMBER,
       };
       const expectedResult = { success: true };
       mockGroupService.addMember.mockResolvedValue(expectedResult);
 
       const result = await controller.addMember(groupId, addMemberDto, mockRequest);
 
-      expect(service.addMember).toHaveBeenCalledWith(
-        groupId,
-        addMemberDto,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.addMember).toHaveBeenCalledWith(groupId, addMemberDto, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
 
@@ -171,11 +157,7 @@ describe('GroupController', () => {
 
       const result = await controller.removeMember(groupId, memberId, mockRequest);
 
-      expect(service.removeMember).toHaveBeenCalledWith(
-        groupId,
-        memberId,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.removeMember).toHaveBeenCalledWith(groupId, memberId, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
 
@@ -186,12 +168,7 @@ describe('GroupController', () => {
 
       const result = await controller.updateMemberRole(groupId, memberId, role, mockRequest);
 
-      expect(service.updateMemberRole).toHaveBeenCalledWith(
-        groupId,
-        memberId,
-        role,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.updateMemberRole).toHaveBeenCalledWith(groupId, memberId, role, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
   });
@@ -205,10 +182,7 @@ describe('GroupController', () => {
 
       const result = await controller.getUnreadCount(groupId, mockRequest);
 
-      expect(service.getUnreadCount).toHaveBeenCalledWith(
-        groupId,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.getUnreadCount).toHaveBeenCalledWith(groupId, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
 
@@ -218,10 +192,7 @@ describe('GroupController', () => {
 
       const result = await controller.markAsRead(groupId, mockRequest);
 
-      expect(service.updateMemberLastRead).toHaveBeenCalledWith(
-        groupId,
-        new Types.ObjectId(mockRequest.user.userId)
-      );
+      expect(service.updateMemberLastRead).toHaveBeenCalledWith(groupId, new Types.ObjectId(mockRequest.user.userId));
       expect(result).toEqual(expectedResult);
     });
   });
