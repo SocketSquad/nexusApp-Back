@@ -32,6 +32,7 @@ export class GroupMessagesController {
     @Body() createMessageDto: CreateGroupMessageDto,
     @Req() req: any
   ) {
+
     const userId = new Types.ObjectId(req.user.userId);
     return this.messagesService.create(groupId, userId, createMessageDto);
   }

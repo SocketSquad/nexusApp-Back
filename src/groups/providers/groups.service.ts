@@ -126,7 +126,7 @@ export class GroupService implements IGroupService {
     const group = await this.findById(groupId);
     
     // Check if user is a member or owner
-    const isMember = group.members.some(m => m.userId._id.toString() === userId.toString());
+    const isMember = group.members.some(m => m.userId.toString() === userId.toString());
     const isOwner = group.owner._id.toString() === userId.toString();
     
     if (!isMember && !isOwner) {
