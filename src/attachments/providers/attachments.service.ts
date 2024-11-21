@@ -1,46 +1,42 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { AttachmentsRepository } from '../repositories/attachments.repository';
-import { CreateAttachmentDto } from '../dtos/create-attachments.dto';
-import { QueryAttachmentDto } from '../dtos/query-attachments.dto';
-import { IAttachmentsService } from '../interfaces/attachments.service.interface';
-import { Attachment } from '../schema/attachment.schema';
+// import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+// import { AttachmentsRepository } from '../repositories/attachments.repository';
+// import { UploadService } from '../../upload/providers/upload.service';
+// import { CreateAttachmentDto } from '../dtos/create-attachments.dto';
+// import { Attachment } from '../schema/attachment.schema';
 
-@Injectable()
-export class AttachmentsService implements IAttachmentsService {
-  constructor(private readonly attachmentsRepository: AttachmentsRepository) {}
+// @Injectable()
+// export class AttachmentsService {
+//   constructor(
+//     private readonly attachmentsRepository: AttachmentsRepository,
+//     private readonly uploadService: UploadService,
+//   ) {}
 
-  async create(createAttachmentDto: CreateAttachmentDto, uploaderId: string): Promise<Attachment> {
-    return this.attachmentsRepository.create(createAttachmentDto, uploaderId);
-  }
+//   // Simplified create method
+//   async create(
+//     createAttachmentDto: CreateAttachmentDto, 
+//     uploaderId: string, 
+//     file: Express.Multer.File
+//   ): Promise<Attachment> {
+//     // Upload the file to S3 or local storage
+//     const fileUploadResult = await this.uploadService.uploadFile(file);
 
-  async findById(id: string): Promise<Attachment> {
-    const attachment = await this.attachmentsRepository.findById(id);
-    if (!attachment) {
-      throw new NotFoundException(`Attachment with ID ${id} not found`);
-    }
-    return attachment;
-  }
+//     // Create the attachment record in the database
+//     // const attachment = await this.attachmentsRepository.create({
+//     //   ...createAttachmentDto,
+//     //   fileName: file.originalname,
+//     //   fileUrl: fileUploadResult.url,
+//     //   size: file.size,
+//     // }, uploaderId);
 
-  async findByMessageId(messageId: string): Promise<Attachment[]> {
-    return this.attachmentsRepository.findByMessageId(messageId);
-  }
+//     // return attachment;
+//   }
 
-  async find(query: QueryAttachmentDto): Promise<Attachment[]> {
-    return this.attachmentsRepository.find(query);
-  }
-
-  async delete(id: string, userId: string): Promise<Attachment> {
-    const attachment = await this.findById(id);
-
-    // Check  user is the uploader
-    if (attachment.uploaderId.toString() !== userId) {
-      throw new ForbiddenException('Unauthorized to delete this attachment');
-    }
-
-    return this.attachmentsRepository.delete(id);
-  }
-
-  async deleteByMessageId(messageId: string): Promise<void> {
-    await this.attachmentsRepository.deleteByMessageId(messageId);
-  }
-}
+//   // Find attachment by ID (simplified)
+//   async findById(id: string): Promise<Attachment> {
+//     const attachment = await this.attachmentsRepository.findById(id);
+//     if (!attachment) {
+//       throw new NotFoundException(`Attachment with ID ${id} not found`);
+//     }
+//     return attachment;
+//   }
+// }

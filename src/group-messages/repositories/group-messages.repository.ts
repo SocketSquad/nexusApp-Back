@@ -5,12 +5,14 @@ import { GroupMessage } from '../schemas/group-message.schema';
 import { CreateGroupMessageDto } from '../dtos/create-group-message.dto';
 import { UpdateGroupMessageDto } from '../dtos/update-group-message.dto';
 import { IGroupMessagesRepository } from '../interfaces/group-messages.repository.interface';
+import { Group } from '@/groups/schemas/group.schema';
 
 @Injectable()
 export class GroupMessagesRepository implements IGroupMessagesRepository {
   constructor(
     @InjectModel(GroupMessage.name)
     private readonly messageModel: Model<GroupMessage>,
+    @InjectModel(Group.name) private readonly groupModel: Model<Group>
   ) {}
 
   async create(
@@ -23,6 +25,12 @@ export class GroupMessagesRepository implements IGroupMessagesRepository {
       senderId,
       ...createMessageDto,
     });
+      // Update the group to include the new message
+    await this.groupModel.findByIdAndUpdate(
+    groupId,
+    { $push: { messages: message._id } }, 
+    { new: true } 
+    );
     return message.save();
   }
 

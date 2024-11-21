@@ -45,6 +45,12 @@ export class GroupMessage extends Document {
   @Prop({ type: Date })
   deletedAt?: Date;
 
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Attachment',
+  })
+  attachments: MongooseSchema.Types.ObjectId[];
+
   createdAt: Date;
   updatedAt: Date;
 }

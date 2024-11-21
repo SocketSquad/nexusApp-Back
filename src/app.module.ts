@@ -6,7 +6,7 @@ import { UsersModule } from './users/users.module';
 import { GroupsModule } from './groups/groups.module';
 import { DirectMessageModule } from './direct-messages/direct-messages.module';
 import { GroupMessagesModule } from './group-messages/group-messages.module';
-import { AttachmentsModule } from './attachments/attachments.module';
+// import { AttachmentsModule } from './attachments/attachments.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
@@ -26,7 +26,7 @@ import { FriendRequestModule } from './friends-requests/friends-requests.module'
     GroupsModule,
     DirectMessageModule,
     GroupMessagesModule,
-    AttachmentsModule,
+    // AttachmentsModule,
     FriendModule,
     FriendRequestModule ,
     SessionsModule,

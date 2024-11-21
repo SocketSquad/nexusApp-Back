@@ -5,10 +5,12 @@ import { GroupMessagesRepository } from './repositories/group-messages.repositor
 import { GroupMessagesService } from './providers/group-messages.service';
 import { GroupMessagesController } from './group-messages.controller';
 import { GroupsModule } from '@/groups/groups.module';
+import { Group, GroupSchema } from '@/groups/schemas/group.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: Group.name, schema: GroupSchema },
       { name: GroupMessage.name, schema: GroupMessageSchema }
     ]),
     GroupsModule

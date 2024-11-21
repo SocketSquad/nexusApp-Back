@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { AttachmentType } from '@/utils/types';
 
 @Schema({
   collection: 'attachments',
@@ -22,18 +21,11 @@ export class Attachment extends Document {
   })
   messageType: string;
 
-  @Prop({
-    type: String,
-    enum: Object.values(AttachmentType),
-    required: true,
-  })
-  type: AttachmentType;
-
   @Prop({ required: true })
   fileName: string;
 
   @Prop({ required: true })
-  url: string;
+  fileUrl: string;
 
   @Prop({ required: true })
   size: number;
@@ -48,3 +40,4 @@ export class Attachment extends Document {
 }
 
 export const AttachmentSchema = SchemaFactory.createForClass(Attachment);
+
