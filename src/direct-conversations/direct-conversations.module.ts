@@ -6,11 +6,7 @@ import { DirectConversationService } from './providers/direct-conversation.servi
 import { DirectConversationRepository } from './repositories/direct-conversation.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: DirectConversation.name, schema: DirectConversationSchema },
-    ]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: DirectConversation.name, schema: DirectConversationSchema }])],
   controllers: [DirectConversationController],
   providers: [DirectConversationService, DirectConversationRepository],
   exports: [DirectConversationService],

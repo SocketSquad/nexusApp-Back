@@ -1,59 +1,40 @@
-import {
-    Controller,
-    Get,
-    Post,
-    Put,
-    Delete,
-    Body,
-    Param,
-    HttpStatus,
-    ValidationPipe,
-  } from '@nestjs/common';
-  import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-  import { Types } from 'mongoose';
-  import { DirectConversationService } from './providers/direct-conversation.service';
-  import { DirectConversation } from './schemas/direct-conversations.schema';
-  import { CreateDirectConversationDto, ParticipantDto } from './dtos/create-direct-conversation.dto';
-  import { UpdateLastMessageDto } from './dtos/update-last-message.dto';
-  import { ConversationResponseDto } from './dtos/conversation-response.dto';
-  import { ICreateDirectConversation} from './interfaces/direct-conversation.interface';
-  import { ILastMessage } from './interfaces/direct-conversation.interface';
-  import {
-    ConversationNotFoundException,
-    ConversationCreationException,
-    ConversationUpdateException,
-    ConversationDeletionException,
-  } from './exeptions/direct-conversation.exceptions';
-  @ApiTags('Direct Conversations')
-  @Controller('direct-conversations')
-  export class DirectConversationController {
-    constructor(
-      private readonly directConversationService: DirectConversationService,
-    ) {}
-  
-    @Post()
-    @ApiOperation({ summary: 'Create a new direct conversation' })
-    @ApiResponse({
-      status: HttpStatus.CREATED,
-      description: 'Conversation created successfully',
-      type: ConversationResponseDto,
-    })
-    async create(
-      @Body(ValidationPipe) createDto: CreateDirectConversationDto,
-    ): Promise<DirectConversation> {
-      try {
-        const transformedData: ICreateDirectConversation = {
-          participants: createDto.participants.map((participant: ParticipantDto) => ({
-            userId: new Types.ObjectId(participant.userId),
-          })),
-        };
-        return await this.directConversationService.create(transformedData);
-      } catch  {
-        throw new ConversationCreationException();
-      }
-    }
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, ValidationPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Types } from 'mongoose';
+import { DirectConversationService } from './providers/direct-conversation.service';
+import { DirectConversation } from './schemas/direct-conversations.schema';
+import { CreateDirectConversationDto, ParticipantDto } from './dtos/create-direct-conversation.dto';
+import { UpdateLastMessageDto } from './dtos/update-last-message.dto';
+import { ConversationResponseDto } from './dtos/conversation-response.dto';
+import { ICreateDirectConversation } from './interfaces/direct-conversation.interface';
+import { ILastMessage } from './interfaces/direct-conversation.interface';
+import { ConversationNotFoundException, ConversationCreationException, ConversationUpdateException, ConversationDeletionException } from './exeptions/direct-conversation.exceptions';
+@ApiTags('Direct Conversations')
+@Controller('direct-conversations')
+export class DirectConversationController {
+  constructor(private readonly directConversationService: DirectConversationService) {}
 
-     @Get(':id')
+  @Post()
+  @ApiOperation({ summary: 'Create a new direct conversation' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Conversation created successfully',
+    type: ConversationResponseDto,
+  })
+  async create(@Body(ValidationPipe) createDto: CreateDirectConversationDto): Promise<DirectConversation> {
+    try {
+      const transformedData: ICreateDirectConversation = {
+        participants: createDto.participants.map((participant: ParticipantDto) => ({
+          userId: new Types.ObjectId(participant.userId),
+        })),
+      };
+      return await this.directConversationService.create(transformedData);
+    } catch {
+      throw new ConversationCreationException();
+    }
+  }
+
+  @Get(':id')
   @ApiOperation({ summary: 'Get a conversation by ID' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -67,11 +48,11 @@ import {
         throw new ConversationNotFoundException();
       }
       return conversation;
-    } catch  {
+    } catch {
       throw new ConversationNotFoundException();
     }
   }
-  
+
   @Get('user/:userId')
   @ApiOperation({ summary: 'Get all conversations for a user' })
   @ApiResponse({
@@ -79,16 +60,14 @@ import {
     description: 'Conversations retrieved successfully',
     type: [ConversationResponseDto],
   })
-  async findByParticipant(
-    @Param('userId') userId: string,
-  ): Promise<DirectConversation[]> {
+  async findByParticipant(@Param('userId') userId: string): Promise<DirectConversation[]> {
     try {
       return await this.directConversationService.findByParticipant(userId);
     } catch {
       throw new ConversationNotFoundException();
     }
   }
-  
+
   @Put(':id/last-message')
   @ApiOperation({ summary: 'Update last message in conversation' })
   @ApiResponse({
@@ -96,10 +75,7 @@ import {
     description: 'Last message updated successfully',
     type: ConversationResponseDto,
   })
-  async updateLastMessage(
-    @Param('id') id: string,
-    @Body(ValidationPipe) updateDto: UpdateLastMessageDto,
-  ): Promise<DirectConversation> {
+  async updateLastMessage(@Param('id') id: string, @Body(ValidationPipe) updateDto: UpdateLastMessageDto): Promise<DirectConversation> {
     try {
       const transformedData: ILastMessage = {
         _id: new Types.ObjectId(updateDto._id),
@@ -108,11 +84,11 @@ import {
         sentAt: updateDto.sentAt || new Date(),
       };
       return await this.directConversationService.updateLastMessage(id, transformedData);
-    } catch  {
+    } catch {
       throw new ConversationUpdateException();
     }
   }
-  
+
   @Put(':id/read/:userId')
   @ApiOperation({ summary: 'Mark conversation as read for user' })
   @ApiResponse({
@@ -120,10 +96,7 @@ import {
     description: 'Conversation marked as read successfully',
     type: ConversationResponseDto,
   })
-  async updateLastRead(
-    @Param('id') id: string,
-    @Param('userId') userId: string,
-  ): Promise<DirectConversation> {
+  async updateLastRead(@Param('id') id: string, @Param('userId') userId: string): Promise<DirectConversation> {
     try {
       return await this.directConversationService.updateLastRead(id, userId);
     } catch {
@@ -131,7 +104,6 @@ import {
     }
   }
 
-  
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a conversation' })
   @ApiResponse({
@@ -142,8 +114,8 @@ import {
   async delete(@Param('id') id: string): Promise<DirectConversation> {
     try {
       return await this.directConversationService.delete(id);
-    } catch  {
+    } catch {
       throw new ConversationDeletionException();
     }
   }
-  }
+}

@@ -6,11 +6,11 @@ export interface IParticipant {
 }
 
 export interface ILastMessage {
-    _id: Types.ObjectId;
-    content: string;
-    senderId: Types.ObjectId;
-    sentAt: Date;
-  }
+  _id: Types.ObjectId;
+  content: string;
+  senderId: Types.ObjectId;
+  sentAt: Date;
+}
 
 export interface IDirectConversation extends Document {
   participants: IParticipant[];
@@ -20,16 +20,16 @@ export interface IDirectConversation extends Document {
 }
 
 export interface ICreateDirectConversation {
-    participants: IParticipant[];
-  }
+  participants: IParticipant[];
+}
 
 export interface IUpdateDirectConversation {
   lastMessage?: ILastMessage;
   'participants.$.lastRead'?: Date;
 }
 export interface IUpdateLastMessage {
-    _id: Types.ObjectId;
-    content: string;
-    senderId: Types.ObjectId;
-    sentAt: Date;
-  }
+  _id: Types.ObjectId;
+  content: string;
+  senderId: Types.ObjectId;
+  sentAt: Date;
+}

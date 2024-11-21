@@ -59,9 +59,7 @@ describe('FriendRequestService', () => {
     });
 
     it('should throw BadRequestException if reverse request exists', async () => {
-      mockRepository.findBySenderAndReceiver
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce({ id: '1' });
+      mockRepository.findBySenderAndReceiver.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: '1' });
 
       await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
     });
@@ -84,18 +82,15 @@ describe('FriendRequestService', () => {
     it('should accept a friend request', async () => {
       const requestId = new Types.ObjectId().toString();
       mockRepository.findById.mockResolvedValue({ id: requestId });
-      mockRepository.updateStatus.mockResolvedValue({ 
-        id: requestId, 
-        status: FriendStatus.ACCEPTED 
+      mockRepository.updateStatus.mockResolvedValue({
+        id: requestId,
+        status: FriendStatus.ACCEPTED,
       });
 
       const result = await service.acceptRequest(requestId);
 
       expect(result.status).toBe(FriendStatus.ACCEPTED);
-      expect(mockRepository.updateStatus).toHaveBeenCalledWith(
-        requestId,
-        FriendStatus.ACCEPTED
-      );
+      expect(mockRepository.updateStatus).toHaveBeenCalledWith(requestId, FriendStatus.ACCEPTED);
     });
 
     it('should throw NotFoundException if request not found', async () => {
@@ -109,9 +104,9 @@ describe('FriendRequestService', () => {
     it('should reject a friend request', async () => {
       const requestId = new Types.ObjectId().toString();
       mockRepository.findById.mockResolvedValue({ id: requestId });
-      mockRepository.updateStatus.mockResolvedValue({ 
-        id: requestId, 
-        status: FriendStatus.REJECTED 
+      mockRepository.updateStatus.mockResolvedValue({
+        id: requestId,
+        status: FriendStatus.REJECTED,
       });
 
       const result = await service.rejectRequest(requestId);

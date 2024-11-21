@@ -37,18 +37,15 @@ export class FriendRequestRepository {
       .exec();
   }
 
-  async updateStatus(
-    requestId: string, 
-    status: FriendStatus,
-  ): Promise<FriendRequest> {
+  async updateStatus(requestId: string, status: FriendStatus): Promise<FriendRequest> {
     return this.friendRequestModel
       .findByIdAndUpdate(
         requestId,
-        { 
+        {
           status,
           respondedAt: status !== FriendStatus.PENDING ? new Date() : undefined,
         },
-        { new: true }
+        { new: true },
       )
       .exec();
   }

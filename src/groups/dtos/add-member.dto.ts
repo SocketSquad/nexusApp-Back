@@ -2,9 +2,8 @@ import { IsEnum, IsOptional, IsMongoId } from 'class-validator';
 import { GroupRole } from '@/utils/types';
 import { Types } from 'mongoose';
 
-
 export class AddMemberDto {
-  @IsMongoId()  
+  @IsMongoId()
   userId: Types.ObjectId;
 
   @IsEnum(GroupRole)

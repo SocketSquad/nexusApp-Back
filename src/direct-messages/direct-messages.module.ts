@@ -6,15 +6,9 @@ import { DirectMessage, DirectMessageSchema } from './schemas/direct-message.sch
 
 import { DirectMessageRepository } from './repositories/direct-message.repository';
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: DirectMessage.name, schema: DirectMessageSchema }
-    ])
-  ],
+  imports: [MongooseModule.forFeature([{ name: DirectMessage.name, schema: DirectMessageSchema }])],
   controllers: [DirectMessageController],
-  providers: [DirectMessageService ,
-    DirectMessageRepository 
-  ],
-  exports: [DirectMessageService]
+  providers: [DirectMessageService, DirectMessageRepository],
+  exports: [DirectMessageService],
 })
 export class DirectMessageModule {}

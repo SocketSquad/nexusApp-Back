@@ -1,15 +1,4 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Put, 
-  Delete, 
-  Body, 
-  Param, 
-  Query, 
-  UseGuards, 
-  Req 
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
@@ -21,30 +10,18 @@ import { UpdateGroupMessageDto } from './dtos/update-group-message.dto';
 @Controller('groups/:groupId/messages')
 @UseGuards(JwtAuthGuard)
 export class GroupMessagesController {
-  constructor(
-    private readonly messagesService: GroupMessagesService
-  ) {}
+  constructor(private readonly messagesService: GroupMessagesService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new message in group' })
-  async create(
-    @Param('groupId') groupId: string,
-    @Body() createMessageDto: CreateGroupMessageDto,
-    @Req() req: any
-  ) {
+  async create(@Param('groupId') groupId: string, @Body() createMessageDto: CreateGroupMessageDto, @Req() req: any) {
     const userId = new Types.ObjectId(req.user.userId);
     return this.messagesService.create(groupId, userId, createMessageDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get messages from group' })
-  async findAll(
-    @Param('groupId') groupId: string,
-    @Req() req: any,
-    @Query('limit') limit?: number,
-    @Query('before') before?: string,
-    
-  ) {
+  async findAll(@Param('groupId') groupId: string, @Req() req: any, @Query('limit') limit?: number, @Query('before') before?: string) {
     const userId = new Types.ObjectId(req.user.userId);
     return this.messagesService.findByGroupId(groupId, userId, limit, before);
   }
@@ -57,21 +34,14 @@ export class GroupMessagesController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update message' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateMessageDto: UpdateGroupMessageDto,
-    @Req() req: any
-  ) {
+  async update(@Param('id') id: string, @Body() updateMessageDto: UpdateGroupMessageDto, @Req() req: any) {
     const userId = new Types.ObjectId(req.user.userId);
     return this.messagesService.update(id, userId, updateMessageDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete message' })
-  async remove(
-    @Param('id') id: string,
-    @Req() req: any
-  ) {
+  async remove(@Param('id') id: string, @Req() req: any) {
     const userId = new Types.ObjectId(req.user.userId);
     return this.messagesService.delete(id, userId);
   }

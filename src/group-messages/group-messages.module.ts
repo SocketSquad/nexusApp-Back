@@ -7,12 +7,7 @@ import { GroupMessagesController } from './group-messages.controller';
 import { GroupsModule } from '@/groups/groups.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: GroupMessage.name, schema: GroupMessageSchema }
-    ]),
-    GroupsModule
-  ],
+  imports: [MongooseModule.forFeature([{ name: GroupMessage.name, schema: GroupMessageSchema }]), GroupsModule],
   controllers: [GroupMessagesController],
   providers: [GroupMessagesRepository, GroupMessagesService],
   exports: [GroupMessagesService],
