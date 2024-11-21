@@ -6,7 +6,6 @@ import { UploadService } from './providers/upload.service';
 
 describe('UploadController (e2e)', () => {
   let app: INestApplication;
-  let uploadService: UploadService;
 
   // Mock upload service to control S3 upload behavior
   const mockUploadService = {
@@ -17,9 +16,9 @@ describe('UploadController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [UploadModule],
     })
-    .overrideProvider(UploadService)
-    .useValue(mockUploadService)
-    .compile();
+      .overrideProvider(UploadService)
+      .useValue(mockUploadService)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
