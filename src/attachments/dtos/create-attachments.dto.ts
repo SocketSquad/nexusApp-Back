@@ -1,22 +1,20 @@
-import { IsEnum, IsMongoId, IsNumber, IsString, IsUrl } from 'class-validator';
-import { AttachmentType } from '@/utils/types';
+// // create-attachments.dto.ts
+// import { IsNotEmpty, IsString, IsOptional, IsEnum } from 'class-validator';
 
-export class CreateAttachmentDto {
-  @IsMongoId()
-  messageId: string;
+// export class CreateAttachmentDto {
+//   @IsNotEmpty()
+//   @IsString()
+//   messageId: string;
 
-  @IsEnum(['DirectMessage', 'GroupMessage'])
-  messageType: 'DirectMessage' | 'GroupMessage';
+//   @IsNotEmpty()
+//   @IsEnum(['text', 'image', 'file'])
+//   messageType: string;
 
-  @IsEnum(AttachmentType)
-  type: AttachmentType;
+//   @IsOptional()
+//   @IsString()
+//   fileName?: string;
 
-  @IsString()
-  fileName: string;
-
-  @IsUrl()
-  url: string;
-
-  @IsNumber()
-  size: number;
-}
+//   @IsOptional()
+//   @IsString()
+//   fileUrl?: string;
+// }

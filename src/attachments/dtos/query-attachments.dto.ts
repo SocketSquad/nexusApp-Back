@@ -1,15 +1,15 @@
-import { IsEnum, IsMongoId, IsOptional } from 'class-validator';
+// import { IsEnum, IsMongoId, IsOptional } from 'class-validator';
 
-export class QueryAttachmentDto {
-  @IsOptional()
-  @IsMongoId()
-  messageId?: string;
+// export class QueryAttachmentDto {
+//   @IsOptional()
+//   @IsMongoId()
+//   messageId?: string;
 
-  @IsOptional()
-  @IsEnum(['DirectMessage', 'GroupMessage'])
-  messageType?: 'DirectMessage' | 'GroupMessage';
+//   @IsOptional()
+//   @IsEnum(['DirectMessage', 'GroupMessage'])
+//   messageType?: 'DirectMessage' | 'GroupMessage';
 
-  @IsOptional()
-  @IsMongoId()
-  uploaderId?: string;
-}
+//   @IsOptional()
+//   @IsMongoId()
+//   uploaderId?: string;
+// }

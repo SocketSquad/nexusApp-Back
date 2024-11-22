@@ -215,13 +215,7 @@ describe('GroupService', () => {
     const mockGroup = {
       _id: mockGroupId,
       owner: { _id: mockUserId },
-      members: [
-        {
-          userId: { _id: mockUserId },
-          lastRead: new Date(),
-          joinedAt: new Date(),
-        },
-      ],
+      members: [{ userId: { _id: mockUserId }, lastRead: new Date(), joinedAt: new Date() }],
       lastMessage: { sentAt: new Date(), content: 'test' },
     };
 

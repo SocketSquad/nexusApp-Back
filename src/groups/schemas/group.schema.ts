@@ -100,6 +100,9 @@ export class Group extends Document {
 
   @Prop({ type: LastMessage })
   lastMessage?: LastMessage;
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'GroupMessage' }] })
+  messages: MongooseSchema.Types.ObjectId[];
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);
