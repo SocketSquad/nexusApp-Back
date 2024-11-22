@@ -20,14 +20,8 @@ export class FriendService implements IFriendService {
     return this.friendRepository.findByUserId(userId);
   }
 
-  async updateStatus(
-    friendId: string,
-    updateFriendDto: UpdateFriendDto,
-  ): Promise<Friend> {
-    const updatedFriend = await this.friendRepository.updateStatus(
-      friendId,
-      updateFriendDto.status,
-    );
+  async updateStatus(friendId: string, updateFriendDto: UpdateFriendDto): Promise<Friend> {
+    const updatedFriend = await this.friendRepository.updateStatus(friendId, updateFriendDto.status);
 
     if (!updatedFriend) {
       throw new NotFoundException('Relation non trouvée');

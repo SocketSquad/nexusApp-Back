@@ -77,9 +77,7 @@ describe('FriendService', () => {
         },
       ];
 
-      mockRepository.findByUserId.mockResolvedValue(
-        expectedFriends as unknown as Friend[],
-      );
+      mockRepository.findByUserId.mockResolvedValue(expectedFriends as unknown as Friend[]);
 
       const result = await service.findByUserId(userId);
       expect(result).toEqual(expectedFriends);
@@ -102,10 +100,7 @@ describe('FriendService', () => {
 
       const result = await service.updateStatus(friendId, updateDto);
       expect(result).toEqual(expectedResult);
-      expect(mockRepository.updateStatus).toHaveBeenCalledWith(
-        friendId,
-        updateDto.status,
-      );
+      expect(mockRepository.updateStatus).toHaveBeenCalledWith(friendId, updateDto.status);
     });
 
     it('should throw NotFoundException when friend not found', async () => {
@@ -114,9 +109,7 @@ describe('FriendService', () => {
 
       mockRepository.updateStatus.mockResolvedValue(null);
 
-      await expect(service.updateStatus(friendId, updateDto)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.updateStatus(friendId, updateDto)).rejects.toThrow(NotFoundException);
     });
   });
 

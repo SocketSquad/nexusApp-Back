@@ -6,9 +6,7 @@ import { FriendController } from './FriendController';
 import { FriendRepository } from './repositories/friend.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Friend.name, schema: FriendSchema }]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: Friend.name, schema: FriendSchema }])],
   controllers: [FriendController],
   providers: [
     FriendService,

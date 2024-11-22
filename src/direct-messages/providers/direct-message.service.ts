@@ -6,9 +6,7 @@ import { ICreateDirectMessage, IUpdateDirectMessage } from '../interfaces/direct
 
 @Injectable()
 export class DirectMessageService {
-  constructor(
-    private readonly directMessageRepository: DirectMessageRepository,
-  ) {}
+  constructor(private readonly directMessageRepository: DirectMessageRepository) {}
 
   async create(messageData: ICreateDirectMessage): Promise<DirectMessage> {
     return this.directMessageRepository.create(messageData);
@@ -22,22 +20,11 @@ export class DirectMessageService {
     return message;
   }
 
-  async findByConversation(
-    conversationId: Types.ObjectId,
-    limit?: number,
-    before?: Date,
-  ): Promise<DirectMessage[]> {
-    return this.directMessageRepository.findByConversation(
-      conversationId,
-      limit,
-      before,
-    );
+  async findByConversation(conversationId: Types.ObjectId, limit?: number, before?: Date): Promise<DirectMessage[]> {
+    return this.directMessageRepository.findByConversation(conversationId, limit, before);
   }
 
-  async update(
-    id: Types.ObjectId,
-    updateData: IUpdateDirectMessage,
-  ): Promise<DirectMessage> {
+  async update(id: Types.ObjectId, updateData: IUpdateDirectMessage): Promise<DirectMessage> {
     const message = await this.directMessageRepository.update(id, updateData);
     if (!message) {
       throw new NotFoundException('Message not found');

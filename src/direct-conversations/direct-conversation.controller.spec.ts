@@ -49,9 +49,9 @@ describe('DirectConversationController', () => {
         _id: new Types.ObjectId(MOCK_ID),
         participants: createDto.participants,
         toJSON: () => ({ _id: MOCK_ID, participants: createDto.participants }),
-        toObject: () => ({ _id: MOCK_ID, participants: createDto.participants })
+        toObject: () => ({ _id: MOCK_ID, participants: createDto.participants }),
       } as unknown as DirectConversation;
-      
+
       jest.spyOn(service, 'create').mockResolvedValue(result);
       expect(await controller.create(createDto)).toEqual(result);
     });
@@ -63,9 +63,9 @@ describe('DirectConversationController', () => {
         _id: new Types.ObjectId(MOCK_ID),
         participants: [],
         toJSON: () => ({ _id: MOCK_ID, participants: [] }),
-        toObject: () => ({ _id: MOCK_ID, participants: [] })
+        toObject: () => ({ _id: MOCK_ID, participants: [] }),
       } as unknown as DirectConversation;
-      
+
       jest.spyOn(service, 'findById').mockResolvedValue(result);
       expect(await controller.findById(MOCK_ID)).toEqual(result);
     });
@@ -73,13 +73,15 @@ describe('DirectConversationController', () => {
 
   describe('findByParticipant', () => {
     it('should return conversations for a user', async () => {
-      const result = [{
-        _id: new Types.ObjectId(MOCK_ID),
-        participants: [],
-        toJSON: () => ({ _id: MOCK_ID, participants: [] }),
-        toObject: () => ({ _id: MOCK_ID, participants: [] })
-      }] as unknown as DirectConversation[];
-      
+      const result = [
+        {
+          _id: new Types.ObjectId(MOCK_ID),
+          participants: [],
+          toJSON: () => ({ _id: MOCK_ID, participants: [] }),
+          toObject: () => ({ _id: MOCK_ID, participants: [] }),
+        },
+      ] as unknown as DirectConversation[];
+
       jest.spyOn(service, 'findByParticipant').mockResolvedValue(result);
       expect(await controller.findByParticipant(USER_ID)).toEqual(result);
     });
@@ -97,9 +99,9 @@ describe('DirectConversationController', () => {
         _id: new Types.ObjectId(MOCK_ID),
         lastMessage: updateDto,
         toJSON: () => ({ _id: MOCK_ID, lastMessage: updateDto }),
-        toObject: () => ({ _id: MOCK_ID, lastMessage: updateDto })
+        toObject: () => ({ _id: MOCK_ID, lastMessage: updateDto }),
       } as unknown as DirectConversation;
-      
+
       jest.spyOn(service, 'updateLastMessage').mockResolvedValue(result);
       expect(await controller.updateLastMessage(MOCK_ID, updateDto)).toEqual(result);
     });
@@ -112,9 +114,9 @@ describe('DirectConversationController', () => {
         _id: new Types.ObjectId(MOCK_ID),
         lastRead,
         toJSON: () => ({ _id: MOCK_ID, lastRead }),
-        toObject: () => ({ _id: MOCK_ID, lastRead })
+        toObject: () => ({ _id: MOCK_ID, lastRead }),
       } as unknown as DirectConversation;
-      
+
       jest.spyOn(service, 'updateLastRead').mockResolvedValue(result);
       expect(await controller.updateLastRead(MOCK_ID, USER_ID)).toEqual(result);
     });
@@ -125,9 +127,9 @@ describe('DirectConversationController', () => {
       const result = {
         _id: new Types.ObjectId(MOCK_ID),
         toJSON: () => ({ _id: MOCK_ID }),
-        toObject: () => ({ _id: MOCK_ID })
+        toObject: () => ({ _id: MOCK_ID }),
       } as unknown as DirectConversation;
-      
+
       jest.spyOn(service, 'delete').mockResolvedValue(result);
       expect(await controller.delete(MOCK_ID)).toEqual(result);
     });

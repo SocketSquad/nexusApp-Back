@@ -21,10 +21,7 @@ export interface IFriendService {
    * @param updateFriendDto The data to update the status
    * @throws NotFoundException when friend relationship is not found
    */
-  updateStatus(
-    friendId: string,
-    updateFriendDto: UpdateFriendDto,
-  ): Promise<Friend>;
+  updateStatus(friendId: string, updateFriendDto: UpdateFriendDto): Promise<Friend>;
 
   /**
    * Deletes a friend relationship

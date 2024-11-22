@@ -4,6 +4,7 @@ on:
     branches: 
       - main
 
+
 env:
   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
 
@@ -23,7 +24,22 @@ jobs:
       
       - name: Run Docker Container
         id: run-container
-        run: sudo docker run -d -p 3001:3001 --name nexus-app-back-container -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e PORT=3001 -e JWT_SECRET="${{ secrets.JWT_SECRET }}" echaf/nexus-app-back
+        run: |
+          sudo docker run -d -p 3001:3001 --name nexus-app-back-container \
+            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            -e PORT=3001 \
+            -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+            -e AWS_PUBLIC_BUCKET_NAME="${{ secrets.AWS_PUBLIC_BUCKET_NAME }}" \
+            -e AWS_REGION="${{ secrets.AWS_REGION }}" \
+            -e AWS_CLOUDFRONT_URL="${{ secrets.AWS_CLOUDFRONT_URL }}" \
+            -e AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            -e AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            echaf/nexus-app-back
+
+      - name: Log Docker Container Output
+        run: |
+          echo "Fetching Docker container logs..."
+          sudo docker logs nexus-app-back-container || true
           
       - name: Slack Notification on Deployment Success
         if: success()

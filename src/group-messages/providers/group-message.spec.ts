@@ -74,39 +74,18 @@ describe('GroupMessagesService', () => {
       mockGroupMessagesRepository.create.mockResolvedValue(createdMessage);
       mockGroupService.updateLastMessage.mockResolvedValue({});
 
-      const result = await service.create(
-        mockGroupId.toString(),
-        mockUserId,
-        createMessageDto
-      );
+      const result = await service.create(mockGroupId.toString(), mockUserId, createMessageDto);
 
-      expect(groupService.checkMessageAccess).toHaveBeenCalledWith(
-        mockGroupId.toString(),
-        mockUserId
-      );
-      expect(repository.create).toHaveBeenCalledWith(
-        mockGroupId,
-        mockUserId,
-        createMessageDto
-      );
-      expect(groupService.updateLastMessage).toHaveBeenCalledWith(
-        mockGroupId.toString(),
-        mockMessageId,
-        createMessageDto.content,
-        mockUserId,
-        createMessageDto.type
-      );
+      expect(groupService.checkMessageAccess).toHaveBeenCalledWith(mockGroupId.toString(), mockUserId);
+      expect(repository.create).toHaveBeenCalledWith(mockGroupId, mockUserId, createMessageDto);
+      expect(groupService.updateLastMessage).toHaveBeenCalledWith(mockGroupId.toString(), mockMessageId, createMessageDto.content, mockUserId, createMessageDto.type);
       expect(result).toEqual(createdMessage);
     });
 
     it('should throw ForbiddenException if user has no access', async () => {
-      mockGroupService.checkMessageAccess.mockRejectedValue(
-        new ForbiddenException()
-      );
+      mockGroupService.checkMessageAccess.mockRejectedValue(new ForbiddenException());
 
-      await expect(
-        service.create(mockGroupId.toString(), mockUserId, createMessageDto)
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.create(mockGroupId.toString(), mockUserId, createMessageDto)).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -128,35 +107,21 @@ describe('GroupMessagesService', () => {
     it('should throw NotFoundException if message not found', async () => {
       mockGroupMessagesRepository.findById.mockResolvedValue(null);
 
-      await expect(
-        service.findById(mockMessageId.toString())
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findById(mockMessageId.toString())).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('findByGroupId', () => {
     it('should return messages for group', async () => {
-      const messages = [
-        { _id: mockMessageId, content: 'Test message' }
-      ];
+      const messages = [{ _id: mockMessageId, content: 'Test message' }];
 
       mockGroupService.checkMessageAccess.mockResolvedValue(true);
       mockGroupMessagesRepository.findByGroupId.mockResolvedValue(messages);
 
-      const result = await service.findByGroupId(
-        mockGroupId.toString(),
-        mockUserId
-      );
+      const result = await service.findByGroupId(mockGroupId.toString(), mockUserId);
 
-      expect(groupService.checkMessageAccess).toHaveBeenCalledWith(
-        mockGroupId.toString(),
-        mockUserId
-      );
-      expect(repository.findByGroupId).toHaveBeenCalledWith(
-        mockGroupId,
-        undefined,
-        undefined
-      );
+      expect(groupService.checkMessageAccess).toHaveBeenCalledWith(mockGroupId.toString(), mockUserId);
+      expect(repository.findByGroupId).toHaveBeenCalledWith(mockGroupId, undefined, undefined);
       expect(result).toEqual(messages);
     });
 
@@ -168,24 +133,15 @@ describe('GroupMessagesService', () => {
       mockGroupService.checkMessageAccess.mockResolvedValue(true);
       mockGroupMessagesRepository.findByGroupId.mockResolvedValue([]);
 
-      await service.findByGroupId(
-        mockGroupId.toString(),
-        mockUserId,
-        limit,
-        before
-      );
+      await service.findByGroupId(mockGroupId.toString(), mockUserId, limit, before);
 
-      expect(repository.findByGroupId).toHaveBeenCalledWith(
-        mockGroupId,
-        limit,
-        beforeDate
-      );
+      expect(repository.findByGroupId).toHaveBeenCalledWith(mockGroupId, limit, beforeDate);
     });
   });
 
   describe('update', () => {
     const updateMessageDto: UpdateGroupMessageDto = {
-      content: 'Updated message'
+      content: 'Updated message',
     };
 
     const mockMessage = {
@@ -200,19 +156,12 @@ describe('GroupMessagesService', () => {
       mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
       mockGroupMessagesRepository.update.mockResolvedValue({
         ...mockMessage,
-        ...updateMessageDto
+        ...updateMessageDto,
       });
 
-      const result = await service.update(
-        mockMessageId.toString(),
-        mockUserId,
-        updateMessageDto
-      );
+      const result = await service.update(mockMessageId.toString(), mockUserId, updateMessageDto);
 
-      expect(repository.update).toHaveBeenCalledWith(
-        mockMessageId,
-        updateMessageDto
-      );
+      expect(repository.update).toHaveBeenCalledWith(mockMessageId, updateMessageDto);
       expect(result.content).toBe(updateMessageDto.content);
     });
 
@@ -220,18 +169,14 @@ describe('GroupMessagesService', () => {
       const differentUserId = new Types.ObjectId();
       mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
 
-      await expect(
-        service.update(mockMessageId.toString(), differentUserId, updateMessageDto)
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.update(mockMessageId.toString(), differentUserId, updateMessageDto)).rejects.toThrow(ForbiddenException);
     });
 
     it('should throw ForbiddenException if message is too old', async () => {
       mockMessage.createdAt = new Date(Date.now() - 16 * 60 * 1000); // 16 minutes old
       mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
 
-      await expect(
-        service.update(mockMessageId.toString(), mockUserId, updateMessageDto)
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.update(mockMessageId.toString(), mockUserId, updateMessageDto)).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -246,13 +191,10 @@ describe('GroupMessagesService', () => {
       mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
       mockGroupMessagesRepository.softDelete.mockResolvedValue({
         ...mockMessage,
-        deletedAt: new Date()
+        deletedAt: new Date(),
       });
 
-      const result = await service.delete(
-        mockMessageId.toString(),
-        mockUserId
-      );
+      const result = await service.delete(mockMessageId.toString(), mockUserId);
 
       expect(repository.softDelete).toHaveBeenCalledWith(mockMessageId);
       expect(result.deletedAt).toBeDefined();
@@ -262,9 +204,7 @@ describe('GroupMessagesService', () => {
       const differentUserId = new Types.ObjectId();
       mockGroupMessagesRepository.findById.mockResolvedValue(mockMessage);
 
-      await expect(
-        service.delete(mockMessageId.toString(), differentUserId)
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.delete(mockMessageId.toString(), differentUserId)).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -273,20 +213,14 @@ describe('GroupMessagesService', () => {
       const hasAttachments = true;
       const updatedMessage = {
         _id: mockMessageId,
-        hasAttachments
+        hasAttachments,
       };
 
       mockGroupMessagesRepository.setHasAttachments.mockResolvedValue(updatedMessage);
 
-      const result = await service.setHasAttachments(
-        mockMessageId.toString(),
-        hasAttachments
-      );
+      const result = await service.setHasAttachments(mockMessageId.toString(), hasAttachments);
 
-      expect(repository.setHasAttachments).toHaveBeenCalledWith(
-        mockMessageId,
-        hasAttachments
-      );
+      expect(repository.setHasAttachments).toHaveBeenCalledWith(mockMessageId, hasAttachments);
       expect(result.hasAttachments).toBe(hasAttachments);
     });
   });

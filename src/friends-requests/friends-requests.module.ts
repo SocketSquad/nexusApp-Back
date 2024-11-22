@@ -6,13 +6,9 @@ import { FriendRequestRepository } from './repositories/friend-request.repositor
 import { FriendRequest, FriendRequestSchema } from './schemas/friend-request.schema';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: FriendRequest.name, schema: FriendRequestSchema }
-    ])
-  ],
+  imports: [MongooseModule.forFeature([{ name: FriendRequest.name, schema: FriendRequestSchema }])],
   controllers: [FriendRequestController],
   providers: [FriendRequestService, FriendRequestRepository],
-  exports: [FriendRequestService]
+  exports: [FriendRequestService],
 })
 export class FriendRequestModule {}

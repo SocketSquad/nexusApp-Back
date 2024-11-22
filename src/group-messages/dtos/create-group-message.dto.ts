@@ -10,4 +10,3 @@ export class CreateGroupMessageDto {
   @IsOptional()
   type?: MessageType.TEXT;
 }
-
