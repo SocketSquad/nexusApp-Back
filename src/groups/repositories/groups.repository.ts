@@ -124,4 +124,75 @@ export class GroupRepository implements IGroupRepository {
       )
       .exec();
   }
+
+  async addInvitation(groupId: Types.ObjectId, inviteeId: Types.ObjectId, inviterId: Types.ObjectId): Promise<Group> {
+    return this.groupModel
+      .findByIdAndUpdate(
+        groupId,
+        {
+          $push: {
+            invitations: {
+              userId: inviteeId,
+              invitedBy: inviterId,
+              invitedAt: new Date(),
+              status: 'pending',
+            },
+          },
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async acceptInvitation(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<Group> {
+    return this.groupModel
+      .findOneAndUpdate(
+        {
+          _id: groupId,
+          'invitations.userId': userId,
+          'invitations.status': 'pending',
+        },
+        {
+          $set: { 'invitations.$.status': 'accepted' },
+          $push: {
+            members: {
+              userId: userId,
+              role: 'member',
+              joinedAt: new Date(),
+            },
+          },
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async updateInvitationStatus(groupId: Types.ObjectId, userId: Types.ObjectId, status: string): Promise<Group> {
+    return this.groupModel
+      .findOneAndUpdate(
+        {
+          _id: groupId,
+          'invitations.userId': userId,
+          'invitations.status': 'pending',
+        },
+        {
+          $set: { 'invitations.$.status': status },
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async findGroupsByPendingInvitation(userId: Types.ObjectId): Promise<Group[]> {
+    return this.groupModel
+      .find({
+        invitations: {
+          $elemMatch: {
+            userId: userId,
+            status: 'pending',
+          },
+        },
+      })
+      .exec();
+  }
 }

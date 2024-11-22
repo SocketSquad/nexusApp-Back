@@ -6,10 +6,14 @@ import { Group } from '../schemas/group.schema';
 import { UpdatedGroupDto } from '../dtos/update-group.dto';
 import { AddMemberDto } from '../dtos/add-member.dto';
 import { IGroupService } from '../interfaces/group.service.interface';
+import { GroupMessagesService } from '@/group-messages/providers/group-messages.service';
 
 @Injectable()
 export class GroupService implements IGroupService {
-  constructor(private readonly groupRepository: GroupRepository) {}
+  constructor(
+    private readonly groupRepository: GroupRepository,
+    private readonly groupMessagesService: GroupMessagesService,
+  ) {}
 
   async create(createGroupDto: CreateGroupDto, userId: Types.ObjectId): Promise<Group> {
     return this.groupRepository.create(createGroupDto, userId);
@@ -148,5 +152,57 @@ export class GroupService implements IGroupService {
     }
 
     return group.lastMessage.sentAt > lastReadDate ? 1 : 0;
+  }
+
+  async sendInvitation(groupId: string, inviterId: Types.ObjectId, inviteeId: Types.ObjectId): Promise<Group> {
+    const group = await this.findById(groupId);
+
+    // Check if inviter has permission
+    const inviterMember = group.members.find((m) => m.userId._id.toString() === inviterId.toString());
+
+    if (!inviterMember?.role === 'admin' && group.owner._id.toString() !== inviterId.toString()) {
+      throw new ForbiddenException('No permission to send invitations');
+    }
+
+    // Check if user is already a member
+    if (group.members.some((m) => m.userId._id.toString() === inviteeId.toString())) {
+      throw new ForbiddenException('User is already a member');
+    }
+
+    // Check if invitation already exists
+    if (group.invitations?.some((inv) => inv.userId.toString() === inviteeId.toString() && inv.status === 'pending')) {
+      throw new ForbiddenException('Invitation already pending');
+    }
+
+    return this.groupRepository.addInvitation(new Types.ObjectId(groupId), inviteeId, inviterId);
+  }
+
+  async acceptInvitation(groupId: string, userId: Types.ObjectId): Promise<Group> {
+    const group = await this.findById(groupId);
+
+    const invitation = group.invitations?.find((inv) => inv.userId.toString() === userId.toString() && inv.status === 'pending');
+
+    if (!invitation) {
+      throw new NotFoundException('No pending invitation found');
+    }
+
+    // Add member and update invitation status
+    return this.groupRepository.acceptInvitation(new Types.ObjectId(groupId), userId);
+  }
+
+  async declineInvitation(groupId: string, userId: Types.ObjectId): Promise<Group> {
+    const group = await this.findById(groupId);
+
+    const invitation = group.invitations?.find((inv) => inv.userId.toString() === userId.toString() && inv.status === 'pending');
+
+    if (!invitation) {
+      throw new NotFoundException('No pending invitation found');
+    }
+
+    return this.groupRepository.updateInvitationStatus(new Types.ObjectId(groupId), userId, 'declined');
+  }
+
+  async getPendingInvitations(userId: Types.ObjectId): Promise<Group[]> {
+    return this.groupRepository.findGroupsByPendingInvitation(userId);
   }
 }

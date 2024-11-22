@@ -103,6 +103,21 @@ export class Group extends Document {
 
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'GroupMessage' }] })
   messages: MongooseSchema.Types.ObjectId[];
+
+  @Prop([
+    {
+      userId: { type: Types.ObjectId, ref: 'User' },
+      invitedBy: { type: Types.ObjectId, ref: 'User' },
+      invitedAt: { type: Date, default: Date.now },
+      status: { type: String, enum: ['pending', 'accepted', 'declined'], default: 'pending' },
+    },
+  ])
+  invitations: Array<{
+    userId: Types.ObjectId;
+    invitedBy: Types.ObjectId;
+    invitedAt: Date;
+    status: string;
+  }>;
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);
