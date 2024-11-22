@@ -5,7 +5,9 @@ import { config } from 'aws-sdk';
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create(AppModule, { logger: ['log', 'debug', 'error', 'warn'] });
+    const app = await NestFactory.create(AppModule, {
+      logger: ['log', 'debug', 'error', 'warn'],
+    });
 
     app.enableCors({
       origin: ['http://localhost:3000'],

@@ -14,7 +14,10 @@ export class DirectMessageController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new direct message' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'Message created successfully' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Message created successfully',
+  })
   async createMessage(@Body(ValidationPipe) createMessageDto: CreateDirectMessageDto): Promise<DirectMessage> {
     const messageData = {
       ...createMessageDto,

@@ -44,7 +44,10 @@ describe('FriendRequestService', () => {
 
     it('should create a friend request successfully', async () => {
       mockRepository.findBySenderAndReceiver.mockResolvedValue(null);
-      mockRepository.create.mockResolvedValue({ ...createDto, status: FriendStatus.PENDING });
+      mockRepository.create.mockResolvedValue({
+        ...createDto,
+        status: FriendStatus.PENDING,
+      });
 
       const result = await service.create(createDto);
 

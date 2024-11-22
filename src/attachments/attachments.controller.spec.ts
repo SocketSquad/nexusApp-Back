@@ -65,7 +65,9 @@ describe('AttachmentsController', () => {
 
       mockAttachmentsService.create.mockResolvedValue(mockAttachment);
 
-      const result = await controller.create(createAttachmentDto, { user: mockUser });
+      const result = await controller.create(createAttachmentDto, {
+        user: mockUser,
+      });
 
       expect(service.create).toHaveBeenCalledWith(createAttachmentDto, mockUser.id);
       expect(result).toEqual(mockAttachment);

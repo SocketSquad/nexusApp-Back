@@ -88,7 +88,10 @@ describe('DirectMessageController', () => {
 
     it('should handle before date in query', async () => {
       const beforeDate = new Date();
-      const query: MessageQueryDto = { limit: 50, before: beforeDate.toISOString() };
+      const query: MessageQueryDto = {
+        limit: 50,
+        before: beforeDate.toISOString(),
+      };
       const messages = [mockMessage];
 
       mockService.findByConversation.mockResolvedValue(messages);

@@ -49,7 +49,10 @@ describe('DirectConversationController', () => {
         _id: new Types.ObjectId(MOCK_ID),
         participants: createDto.participants,
         toJSON: () => ({ _id: MOCK_ID, participants: createDto.participants }),
-        toObject: () => ({ _id: MOCK_ID, participants: createDto.participants }),
+        toObject: () => ({
+          _id: MOCK_ID,
+          participants: createDto.participants,
+        }),
       } as unknown as DirectConversation;
 
       jest.spyOn(service, 'create').mockResolvedValue(result);

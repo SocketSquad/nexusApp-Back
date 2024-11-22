@@ -128,7 +128,10 @@ describe('GroupService', () => {
       };
 
       mockGroupRepository.findById.mockResolvedValue(mockGroup);
-      mockGroupRepository.update.mockResolvedValue({ ...mockGroup, ...updateGroupDto });
+      mockGroupRepository.update.mockResolvedValue({
+        ...mockGroup,
+        ...updateGroupDto,
+      });
 
       const result = await service.update(mockGroupId.toString(), updateGroupDto, mockUserId);
 
@@ -163,7 +166,10 @@ describe('GroupService', () => {
         };
 
         mockGroupRepository.findById.mockResolvedValue(mockGroup);
-        mockGroupRepository.addMember.mockResolvedValue({ ...mockGroup, members: [...mockGroup.members, addMemberDto] });
+        mockGroupRepository.addMember.mockResolvedValue({
+          ...mockGroup,
+          members: [...mockGroup.members, addMemberDto],
+        });
 
         const result = await service.addMember(mockGroupId.toString(), addMemberDto, mockUserId);
 
@@ -209,7 +215,13 @@ describe('GroupService', () => {
     const mockGroup = {
       _id: mockGroupId,
       owner: { _id: mockUserId },
-      members: [{ userId: { _id: mockUserId }, lastRead: new Date(), joinedAt: new Date() }],
+      members: [
+        {
+          userId: { _id: mockUserId },
+          lastRead: new Date(),
+          joinedAt: new Date(),
+        },
+      ],
       lastMessage: { sentAt: new Date(), content: 'test' },
     };
 
