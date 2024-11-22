@@ -14,7 +14,14 @@ export class GroupMessagesController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new message in group' })
-  async create(@Param('groupId') groupId: string, @Body() createMessageDto: CreateGroupMessageDto, @Req() req: any) {
+
+  async create(
+    @Param('groupId') groupId: string,
+    @Body() createMessageDto: CreateGroupMessageDto,
+    @Req() req: any
+  ) {
+
+
     const userId = new Types.ObjectId(req.user.userId);
     return this.messagesService.create(groupId, userId, createMessageDto);
   }

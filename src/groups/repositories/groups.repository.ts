@@ -26,7 +26,7 @@ export class GroupRepository implements IGroupRepository {
   }
 
   async findAll(filter: any = {}): Promise<Group[]> {
-    return this.groupModel.find(filter).populate('owner', 'username email').populate('members.userId', 'username email').exec();
+    return this.groupModel.find(filter).populate('owner', 'username email').populate('members.userId', 'username email').populate('messages').exec();
   }
 
   async findById(id: Types.ObjectId): Promise<Group> {
